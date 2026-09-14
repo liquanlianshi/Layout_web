@@ -807,6 +807,7 @@ def build_page(n):
                   f'<span class="pager-title" data-i18n="nav.ch{n+1}"></span></a>') if nxt else \
                  '<span class="pager-next empty"></span>'
 
+    tone = (n - 1) % 3 + 1
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -838,6 +839,13 @@ def build_page(n):
 <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
+<div class="edge-band" data-tone="{tone}" aria-hidden="true"></div>
+<span class="edge-label" aria-hidden="true">第 {n} 章 · 页面布局</span>
+<div class="bg-field bg-field--a" aria-hidden="true"></div>
+<div class="bg-field bg-field--b" aria-hidden="true"></div>
+<div class="bg-field bg-field--c" aria-hidden="true"></div>
+<div class="regmark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<span class="margin-mark margin-mark--right" aria-hidden="true">SEVEN CHAPTERS · PAGE LAYOUT</span>
 
 <!-- ============ 顶栏 ============ -->
 <nav class="course-topbar" data-current="{n}">
