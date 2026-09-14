@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>页面布局 · 交互式教学网站 / Page Layout · Interactive Course</title>
+<meta name="description" content="中英双语页面布局课程：理论 + 关键代码 + 可交互演示" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f7f4ed'/%3E%3Ctext x='32' y='45' font-family='Songti SC,Georgia,serif' font-size='44' font-weight='600' fill='%23bc4a24' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./styles.css" />
+<style>
+  /* 门户页的版式记号：
+     ① 段落起点一枚朱砂角标，位置对齐正文左边线
+     ② 标题层用一条通栏细线把“页边”框出来
+     不再绘制贯穿版面的竖线——它会与课程卡片、数据带的边线打架。 */
+  .sheet { position: relative; padding-top: 4px; }
+  .sheet::before {
+    content: ""; position: absolute; left: 32px; top: 6px;
+    width: 18px; height: 2px; background: var(--accent);
+    pointer-events: none;
+  }
+  .sheet::after {
+    content: ""; position: absolute; left: 32px; right: 32px; top: 32px;
+    height: 1px; background: var(--line-soft); pointer-events: none;
+  }
+  @media (max-width: 900px) {
+    .sheet::before { left: 20px; }
+    .sheet::after { left: 20px; right: 20px; }
+  }
+  .folio-rule {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .26em;
+    text-transform: uppercase; color: var(--tx-mute);
+    margin: 0 0 18px;
+  }
+  .folio-rule::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+  /* 门户页专用：案例演化时间轴 */
+  .evo { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:16px; }
+  @media (max-width:1080px){ .evo { grid-template-columns:minmax(0,1fr); } }
+  .evo-stage { position:relative; }
+  .timeline { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .timeline button {
+    flex:1 1 100px; text-align:left; cursor:pointer;
+    background:none; border:1px solid var(--line); color:var(--tx-mute);
+    border-radius:2px; padding:9px 12px; font:inherit; font-size:12.5px;
+    transition:.18s; position:relative;
+  }
+  .timeline button .st { display:block; font-family:var(--mono); font-size:10px;
+    letter-spacing:.08em; color:var(--tx-mute); margin-bottom:2px; }
+  .timeline button:hover { color:var(--tx); border-color:var(--accent); }
+  .timeline button.on { background:rgba(188,74,36,.07);
+    border-color:var(--accent); color:var(--accent); }
+  .timeline button.on .st { color:var(--gold); }
+  .scoreboard { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .score { flex:1 1 130px; background:none; border:0; border-left:1px solid var(--line-soft);
+    border-radius:0; padding:4px 14px; }
+  .score .lbl { font-family:var(--mono); font-size:9.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--tx-mute); font-weight:700; }
+  .score .num { font-family:var(--mono); font-size:19px; font-weight:700; }
+  .score .num.ok { color:var(--ok); } .score .num.bad { color:var(--bad); }
+  .score .num.mid { color:var(--warn); }
+  .score .st { font-size:10.5px; color:var(--tx-mute); line-height:1.5; }
+</style>
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<nav class="course-topbar" data-current="0">
+  <a class="brand" href="./index.html">
+    <span class="logo-dot">L</span>
+    <span data-i18n="nav.home">布局课程</span>
+  </a>
+  <ul class="tabs">
+    <li><a href="./index.html" data-ch="0" data-i18n="common.portal">课程门户</a></li>
+    <li><a href="./lesson-01/index.html" data-ch="1" data-i18n="nav.ch1">第 1 章 · 案例起步</a></li>
+    <li><a href="./lesson-02/index.html" data-ch="2" data-i18n="nav.ch2">第 2 章 · 盒模型与流</a></li>
+    <li><a href="./lesson-03/index.html" data-ch="3" data-i18n="nav.ch3">第 3 章 · Flex</a></li>
+    <li><a href="./lesson-04/index.html" data-ch="4" data-i18n="nav.ch4">第 4 章 · Grid</a></li>
+    <li><a href="./lesson-05/index.html" data-ch="5" data-i18n="nav.ch5">第 5 章 · 定位层叠</a></li>
+    <li><a href="./lesson-06/index.html" data-ch="6" data-i18n="nav.ch6">第 6 章 · 响应式</a></li>
+    <li><a href="./lesson-07/index.html" data-ch="7" data-i18n="nav.ch7">第 7 章 · 综合实战</a></li>
+  </ul>
+  <div class="lang-switch">
+    <button data-set-lang="zh-CN" class="active">中文</button>
+    <button data-set-lang="en-US">EN</button>
+  </div>
+</nav>
+
+<!-- ============ Hero ============ -->
+<header class="portal-hero">
+  <span class="eyebrow" data-i18n="portal.eyebrow">可视化导论 · 专题课程</span>
+  <h1>
+    <span data-lang="zh-CN">把页面<em class="grad">排好</em>，是一门可以学的学问</span>
+    <span data-lang="en-US" hidden>Making a page <em class="grad">make sense</em> is a skill you can learn</span>
+  </h1>
+  <p class="lead" data-i18n-html="portal.lead"></p>
+
+  <div class="hero-actions">
+    <a class="btn btn-lg primary" href="./lesson-01/index.html" data-i18n="portal.cta.start">从第 1 章开始 →</a>
+    <a class="btn btn-lg" href="#live" data-i18n="portal.cta.jump">直接看可交互演示</a>
+  </div>
+
+  <div class="portal-stats">
+    <div class="stat"><b>7</b><span data-i18n="portal.stat1">章 · 递进式案例</span></div>
+    <div class="stat"><b>21</b><span data-i18n="portal.stat2">个可交互演示</span></div>
+    <div class="stat"><b>21</b><span data-i18n="portal.stat3">段关键代码</span></div>
+    <div class="stat"><b>10</b><span data-i18n="portal.stat4">个真实场景翻车点</span></div>
+  </div>
+</header>
+
+<!-- ============ 案例介绍 ============ -->
+<section class="portal-section sheet">
+  <p class="folio-rule">Section 01 — The Case</p>
+  <h2 data-i18n="portal.case.h">贯穿全站的案例</h2>
+  <p class="section-sub" data-i18n="portal.case.sub"></p>
+
+  <div id="live" class="demo-stage">
+    <div class="demo-stage-head">
+      <span class="dot"></span>
+      <span class="demo-name" data-i18n="evo.title"></span>
+      <span class="demo-live" data-i18n="evo.live"></span>
+    </div>
+    <div class="demo-body">
+      <div class="demo-canvas">
+        <div class="timeline" id="evoTimeline"></div>
+        <div class="demo-frame-wrap evo-stage">
+          <div class="frame-bar">
+            <span>◉</span><span>◉</span><span>◉</span>
+            <span class="url" id="evoUrl">lin-portfolio.local/index.html</span>
+          </div>
+          <iframe id="evoFrame" class="demo-frame" title="portfolio layout evolution"
+                  style="height:400px"></iframe>
+        </div>
+        <div class="scoreboard">
+          <div class="score"><div class="lbl" data-i18n="evo.m1"></div>
+            <div class="num bad" id="evoScore1">—</div><div class="st" id="evoSt1"></div></div>
+          <div class="score"><div class="lbl" data-i18n="evo.m2"></div>
+            <div class="num bad" id="evoScore2">—</div><div class="st" id="evoSt2"></div></div>
+          <div class="score"><div class="lbl" data-i18n="evo.m3"></div>
+            <div class="num bad" id="evoScore3">—</div><div class="st" id="evoSt3"></div></div>
+        </div>
+      </div>
+      <aside class="demo-controls">
+        <div class="group">
+          <h5 data-i18n="evo.ctl"></h5>
+          <div class="demo-actions">
+            <button class="primary" id="evoPlay" data-i18n="evo.play"></button>
+            <button id="evoPrev" data-i18n="evo.prev"></button>
+            <button id="evoNext" data-i18n="evo.next"></button>
+          </div>
+        </div>
+        <div class="group">
+          <h5 data-i18n="evo.why"></h5>
+          <p class="measure" id="evoWhy" style="white-space:normal"></p>
+        </div>
+        <div class="group">
+          <h5 data-i18n="evo.css"></h5>
+          <div class="live-css" id="evoCss"></div>
+        </div>
+        <div class="group">
+          <label class="chk"><input type="checkbox" id="evoGrid" />
+            <span data-i18n="evo.overlay"></span></label>
+          <label class="chk"><input type="checkbox" id="evoSpacing" />
+            <span data-i18n="evo.spacing"></span></label>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 课程地图 ============ -->
+<section class="portal-section sheet">
+  <p class="folio-rule">Section 02 — Contents</p>
+  <h2 data-i18n="portal.map.h">课程地图</h2>
+  <p class="section-sub" data-i18n="portal.map.sub"></p>
+
+  <div class="lesson-grid">
+    <a class="lesson-card" href="./lesson-01/index.html">
+      <span class="big-num" aria-hidden="true">一</span>
+      <div class="idx">CHAPTER 01</div>
+      <h3 data-i18n="portal.l1.t"></h3>
+      <div class="desc" data-i18n="portal.l1.d"></div>
+      <div class="tags"><span data-i18n="tag.gestalt"></span><span data-i18n="tag.hierarchy"></span><span data-i18n="tag.grid-system"></span></div>
+      <div class="go" data-i18n="common.next"></div>
+    </a>
+    <a class="lesson-card" href="./lesson-02/index.html">
+      <span class="big-num" aria-hidden="true">二</span>
+      <div class="idx">CHAPTER 02</div>
+      <h3 data-i18n="portal.l2.t"></h3>
+      <div class="desc" data-i18n="portal.l2.d"></div>
+      <div class="tags"><span data-i18n="tag.boxmodel"></span><span data-i18n="tag.bfc"></span><span data-i18n="tag.margin"></span></div>
+      <div class="go" data-i18n="common.next"></div>
+    </a>
+    <a class="lesson-card" href="./lesson-03/index.html">
+      <span class="big-num" aria-hidden="true">三</span>
+      <div class="idx">CHAPTER 03</div>
+      <h3 data-i18n="portal.l3.t"></h3>
+      <div class="desc" data-i18n="portal.l3.d"></div>
+      <div class="tags"><span data-i18n="tag.flex"></span><span data-i18n="tag.axis"></span><span data-i18n="tag.grow"></span></div>
+      <div class="go" data-i18n="common.next"></div>
+    </a>
+    <a class="lesson-card" href="./lesson-04/index.html">
+      <span class="big-num" aria-hidden="true">四</span>
+      <div class="idx">CHAPTER 04</div>
+      <h3 data-i18n="portal.l4.t"></h3>
+      <div class="desc" data-i18n="portal.l4.d"></div>
+      <div class="tags"><span data-i18n="tag.grid"></span><span data-i18n="tag.fr"></span><span data-i18n="tag.autofit"></span></div>
+      <div class="go" data-i18n="common.next"></div>
+    </a>
+    <a class="lesson-card" href="./lesson-05/index.html">
+      <span class="big-num" aria-hidden="true">五</span>
+      <div class="idx">CHAPTER 05</div>
+      <h3 data-i18n="portal.l5.t"></h3>
+      <div class="desc" data-i18n="portal.l5.d"></div>
+      <div class="tags"><span data-i18n="tag.stack"></span><span data-i18n="tag.sticky"></span><span data-i18n="tag.overflow"></span></div>
+      <div class="go" data-i18n="common.next"></div>
+    </a>
+    <a class="lesson-card" href="./lesson-06/index.html">
+      <span class="big-num" aria-hidden="true">六</span>
+      <div class="idx">CHAPTER 06</div>
+      <h3 data-i18n="portal.l6.t"></h3>
+      <div class="desc" data-i18n="portal.l6.d"></div>
+      <div class="tags"><span data-i18n="tag.breakpoint"></span><span data-i18n="tag.clamp"></span><span data-i18n="tag.intrinsic"></span></div>
+      <div class="go" data-i18n="common.next"></div>
+    </a>
+    <a class="lesson-card" href="./lesson-07/index.html">
+      <span class="big-num" aria-hidden="true">七</span>
+      <div class="idx">CHAPTER 07</div>
+      <h3 data-i18n="portal.l7.t"></h3>
+      <div class="desc" data-i18n="portal.l7.d"></div>
+      <div class="tags"><span data-i18n="tag.checklist"></span><span data-i18n="tag.refactor"></span><span data-i18n="tag.a11y"></span></div>
+      <div class="go" data-i18n="common.next"></div>
+    </a>
+  </div>
+</section>
+
+<!-- ============ 理论覆盖 ============ -->
+<section class="portal-section sheet">
+  <p class="folio-rule">Section 03 — Theory</p>
+  <h2 data-i18n="portal.theory.h">课程覆盖的布局理论</h2>
+  <p class="section-sub" data-i18n="portal.theory.sub"></p>
+  <ul class="mini-list">
+    <li data-i18n="portal.th1"></li>
+    <li data-i18n="portal.th2"></li>
+    <li data-i18n="portal.th3"></li>
+    <li data-i18n="portal.th4"></li>
+    <li data-i18n="portal.th5"></li>
+    <li data-i18n="portal.th6"></li>
+    <li data-i18n="portal.th7"></li>
+    <li data-i18n="portal.th8"></li>
+  </ul>
+</section>
+
+<footer class="portal-footer">
+  <p data-i18n="portal.footer"></p>
+  <p data-i18n="footer.case"></p>
+</footer>
+
+<script src="./i18n.js"></script>
+<script src="./extra-content.js"></script>
+<script src="./site.js"></script>
+<script src="./demos.js"></script>
+<script>
+/* ============================================================
+   门户页：案例演化时间轴（真实 iframe + 真实 CSS 逐步升级）
+   ============================================================ */
+(function () {
+  'use strict';
+
+
+  /* ---------- 案例页面的公共 HTML（iframe 内真实 DOM） ---------- */
+  var CASE_HTML =
+    '<body>' +
+      '<header class="nav"><div class="brand">LIN·PORTFOLIO</div>' +
+        '<nav><a href="#">Work</a><a href="#">About</a><a href="#">Contact</a></nav>' +
+      '</header>' +
+      '<main>' +
+        '<section class="hero">' +
+          '<h1>Lin — Product Designer</h1>' +
+          '<p>I design calm, legible interfaces for data-heavy products. Based in Qingdao, working worldwide.</p>' +
+          '<span class="cta">View case studies</span>' +
+        '</section>' +
+        '<section class="cards">' +
+          '<article class="card"><div class="thumb t1"></div><h3>Analytics console</h3><p>Dense tables, 40k rows, one screen.</p><span class="tag">Data viz</span></article>' +
+          '<article class="card"><div class="thumb t2"></div><h3>Clinical timeline</h3><p>Time-series UI for ICU handover.</p><span class="tag">Healthcare</span></article>' +
+          '<article class="card"><div class="thumb t3"></div><h3>Reading app</h3><p>Typography-first long-form reader.</p><span class="tag">Editorial</span></article>' +
+        '</section>' +
+      '</main>' +
+      '<footer class="foot">© 2026 Lin · Built with plain CSS</footer>' +
+    '</body>';
+
+  /* ---------- 每个阶段的 CSS（真实生效） ---------- */
+  var BASE_CSS =
+    '*{box-sizing:border-box}' +
+    'body{margin:0;font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;color:#1e2433;background:#fff}' +
+    '.card .thumb{background:#d5cabb;height:90px}' +
+    '.card .t2{background:#a9aed0}.card .t3{background:#e3c3bb}' +
+    '.card .tag{font-size:11px;color:#7a6f62}' +
+    '.nav{border-bottom:1px solid #e4dcd0}' +
+    '.brand{font-weight:800;letter-spacing:.08em;font-size:12px;color:#2a2220}';
+
+  var STAGES = [
+    /* 0 原始：几乎不加布局 CSS */
+    { css: BASE_CSS },
+    /* 1 文档流 + 居中 */
+    { css: BASE_CSS +
+      'body{font-size:15px;line-height:1.65;padding:0 20px}' +
+      '.nav,.hero,.cards,.foot{max-width:860px;margin:0 auto}' +
+      '.nav{padding:14px 0;border-bottom:1px solid #e4dcd0}' +
+      '.nav a{margin-right:14px;color:#5a5045;text-decoration:none;font-size:13px}' +
+      '.hero{padding:48px 0 32px}' +
+      '.hero h1{font-size:34px;line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}' +
+      '.hero p{font-size:16px;color:#5a5045;max-width:52ch;margin:0 0 20px}' +
+      '.cta{display:inline-block;background:#2a2220;color:#fff;padding:10px 20px;border-radius:8px;font-size:14px}' +
+      '.card{border:1px solid #e4dcd0;border-radius:12px;padding:14px;margin-bottom:16px}' +
+      '.foot{padding:24px 0;border-top:1px solid #e4dcd0;color:#a1958a;font-size:12px}' },
+    /* 2 Flex */
+    { css: BASE_CSS +
+      'body{font-size:15px;line-height:1.65;padding:0 20px}' +
+      '.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}' +
+      '.nav a{margin-left:16px;color:#5a5045;text-decoration:none;font-size:13px}' +
+      'main,.nav,.foot{max-width:900px;margin:0 auto}' +
+      '.hero{padding:48px 0 32px}' +
+      '.hero h1{font-size:34px;line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}' +
+      '.hero p{font-size:16px;color:#5a5045;max-width:52ch;margin:0 0 20px}' +
+      '.cta{display:inline-block;background:#2a2220;color:#fff;padding:10px 20px;border-radius:8px}' +
+      '.cards{display:flex;flex-wrap:wrap;gap:16px;padding-bottom:32px}' +
+      '.card{flex:1 1 240px;display:flex;flex-direction:column;border:1px solid #e4dcd0;border-radius:12px;padding:14px}' +
+      '.card .tag{margin-top:auto;padding-top:10px}' +
+      '.foot{padding:24px 0;border-top:1px solid #e4dcd0;color:#a1958a;font-size:12px}' },
+    /* 3 Grid */
+    { css: BASE_CSS +
+      'body{font-size:15px;line-height:1.65;padding:0 20px}' +
+      '.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}' +
+      '.nav a{margin-left:16px;color:#5a5045;text-decoration:none;font-size:13px}' +
+      'main,.nav,.foot{max-width:980px;margin:0 auto}' +
+      '.hero{display:grid;grid-template-columns:7fr 5fr;gap:28px;align-items:center;padding:52px 0 40px}' +
+      '.hero h1{font-size:36px;line-height:1.12;margin:0 0 12px;letter-spacing:-.02em;grid-column:1}' +
+      '.hero p{font-size:16px;color:#5a5045;margin:0 0 20px;grid-column:1}' +
+      '.hero .cta{grid-column:1;justify-self:start;display:inline-block;background:#2a2220;color:#fff;padding:10px 20px;border-radius:8px}' +
+      '.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding-bottom:36px}' +
+      '.card{display:grid;grid-template-rows:auto auto 1fr auto;border:1px solid #e4dcd0;border-radius:12px;padding:14px}' +
+      '.card h3{margin:10px 0 4px;font-size:15px}.card p{margin:0;color:#7a6f62;font-size:13px}' +
+      '.foot{padding:24px 0;border-top:1px solid #e4dcd0;color:#a1958a;font-size:12px}' },
+    /* 4 交付版 */
+    { css: BASE_CSS +
+      'html{scroll-behavior:smooth}' +
+      'body{font-size:clamp(14px,1.1vw,16px);line-height:1.65;padding:0 20px}' +
+      '.nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);' +
+        'display:flex;align-items:center;justify-content:space-between;padding:14px 0}' +
+      '.nav a{margin-left:18px;color:#5a5045;text-decoration:none;font-size:13px;padding:4px 2px;' +
+        'border-bottom:2px solid transparent}' +
+      '.nav a:hover,.nav a:focus-visible{border-bottom-color:#2a2220;color:#2a2220;outline:none}' +
+      'main,.nav,.foot{max-width:1040px;margin:0 auto}' +
+      '.hero{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;align-items:center;padding:56px 0 44px}' +
+      '.hero h1{grid-column:1/8;font-size:clamp(28px,4.2vw,44px);line-height:1.1;margin:0 0 14px;letter-spacing:-.025em}' +
+      '.hero p{grid-column:1/7;font-size:clamp(14px,1.3vw,17px);color:#5a5045;margin:0 0 22px}' +
+      '.hero .cta{grid-column:1/4;justify-self:start;display:inline-block;background:#2a2220;color:#fff;' +
+        'padding:12px 22px;border-radius:9px;box-shadow:0 6px 18px rgba(15,23,42,.18)}' +
+      '.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;padding-bottom:44px}' +
+      '.card{display:grid;grid-template-rows:auto auto 1fr auto;border:1px solid #e4dcd0;border-radius:14px;' +
+        'padding:16px;transition:transform .2s,box-shadow .2s}' +
+      '.card:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(15,23,42,.1)}' +
+      '.card .thumb{border-radius:9px}' +
+      '.card h3{margin:12px 0 4px;font-size:15px;letter-spacing:-.01em}' +
+      '.card p{margin:0;color:#7a6f62;font-size:13px}' +
+      '.card .tag{margin-top:12px;padding-top:10px;border-top:1px dashed #e4dcd0}' +
+      '.foot{padding:26px 0;border-top:1px solid #e4dcd0;color:#a1958a;font-size:12px}' +
+      '@media(max-width:640px){.hero h1,.hero p,.hero .cta{grid-column:1/-1}.hero{padding:36px 0 28px}}' }
+  ];
+
+  /* ---------- 参考线 / 描边覆盖层 ---------- */
+  var OVERLAY_GRID =
+    'body::before{content:"";position:fixed;inset:0;z-index:99;pointer-events:none;' +
+    'max-width:1040px;margin:0 auto;' +
+    'background:repeating-linear-gradient(to right,' +
+    'rgba(79,91,138,.14) 0,rgba(79,91,138,.14) calc((100% - 220px)/12),' +
+    'transparent calc((100% - 220px)/12),transparent calc((100% - 220px)/12 + 20px))}';
+
+  var OVERLAY_SPACING =
+    '*{outline:1px solid rgba(196,85,63,.4)!important}' +
+    '.hero,.cards,.nav,.foot{outline:1px dashed rgba(79,91,138,.85)!important;background:rgba(79,91,138,.05)!important}' +
+    '.card,.cta{outline:1px solid rgba(79,129,117,.85)!important;background:rgba(79,129,117,.06)!important}';
+
+  var frame = document.getElementById('evoFrame');
+  var cssBox = document.getElementById('evoCss');
+  var whyBox = document.getElementById('evoWhy');
+  var timeline = document.getElementById('evoTimeline');
+  var gridChk = document.getElementById('evoGrid');
+  var spaceChk = document.getElementById('evoSpacing');
+  var stage = 0, timer = null;
+
+  /* 生成时间轴按钮 */
+  /* 阶段名的 i18n key 用静态表，便于 tools/check.mjs 静态校验 */
+  var STAGE_KEYS = ['evo.s0', 'evo.s1', 'evo.s2', 'evo.s3', 'evo.s4'];
+
+  STAGES.forEach(function (s, i) {
+    var b = document.createElement('button');
+    b.innerHTML = '<span class="st">' + String(i).padStart(2, '0') + '</span>' +
+                  '<span data-i18n="' + STAGE_KEYS[i] + '"></span>';
+    b.addEventListener('click', function () { stop(); setStage(i); });
+    timeline.appendChild(b);
+  });
+
+  function render() {
+    var css = STAGES[stage].css;
+    if (gridChk.checked) css += OVERLAY_GRID;
+    if (spaceChk.checked) css += OVERLAY_SPACING;
+    var doc = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>' + css + '</style></head>' +
+              CASE_HTML + '</html>';
+    frame.srcdoc = doc;
+    cssBox.innerHTML = window.LAYOUT_DEMOS
+      ? window.LAYOUT_DEMOS.hlCSS(STAGES[stage].css)
+      : STAGES[stage].css;
+  }
+
+  function setStage(i) {
+    stage = Math.max(0, Math.min(STAGES.length - 1, i));
+    timeline.querySelectorAll('button').forEach(function (b, k) {
+      b.classList.toggle('on', k === stage);
+    });
+    whyBox.setAttribute('data-i18n', 'evo.w' + stage);
+    whyBox.textContent = (window.I18N && window.I18N.t('evo.w' + stage)) || '';
+    updateScores();
+    render();
+  }
+
+  /* 三个客观指标：直接测量 iframe 内真实 DOM */
+  function updateScores() {
+    var d = frame.contentDocument;
+    var s1 = document.getElementById('evoScore1');
+    var s2 = document.getElementById('evoScore2');
+    var s3 = document.getElementById('evoScore3');
+    var st1 = document.getElementById('evoSt1');
+    var st2 = document.getElementById('evoSt2');
+    var st3 = document.getElementById('evoSt3');
+    if (!d || !d.body) return;
+
+    /* ① 横向溢出 */
+    var over = d.documentElement.scrollWidth - d.documentElement.clientWidth;
+    s1.textContent = over > 1 ? '+' + over + 'px' : '0px';
+    s1.className = 'num ' + (over > 1 ? 'bad' : 'ok');
+    st1.textContent = t(over > 1 ? 'evo.st.over.bad' : 'evo.st.over.ok');
+
+    /* ② 顶栏中线对齐：品牌与导航项中线差值 */
+    var links = d.querySelectorAll('.nav a');
+    var brand = d.querySelector('.brand');
+    var spread = 0;
+    if (links.length && brand) {
+      var centers = Array.prototype.map.call(links, function (a) {
+        var r = a.getBoundingClientRect(); return r.top + r.height / 2;
+      });
+      var br = brand.getBoundingClientRect();
+      centers.push(br.top + br.height / 2);
+      spread = Math.round(Math.max.apply(null, centers) - Math.min.apply(null, centers));
+    }
+    s2.textContent = spread <= 2 ? 'aligned' : '±' + spread + 'px';
+    s2.className = 'num ' + (spread <= 2 ? 'ok' : 'bad');
+    st2.textContent = t(spread <= 2 ? 'evo.st.al.ok' : 'evo.st.al.bad');
+
+    /* ③ 层级比：h1 字号 / 正文行高 */
+    var h1 = d.querySelector('.hero h1');
+    var p = d.querySelector('.hero p');
+    if (h1 && p) {
+      var hf = parseFloat(d.defaultView.getComputedStyle(h1).fontSize);
+      var pf = parseFloat(d.defaultView.getComputedStyle(p).fontSize);
+      var ratio = pf ? hf / pf : 1;
+      s3.textContent = ratio.toFixed(2) + '×';
+      var cls = ratio >= 2 ? 'ok' : ratio >= 1.6 ? 'mid' : 'bad';
+      s3.className = 'num ' + cls;
+      st3.textContent = t('evo.st.hi.' + cls);
+    }
+  }
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; document.getElementById('evoPlay').textContent = t('evo.play'); } }
+  function t(k) { return (window.I18N && window.I18N.t(k)) || k; }
+
+  document.getElementById('evoPrev').addEventListener('click', function () { stop(); setStage(stage - 1); });
+  document.getElementById('evoNext').addEventListener('click', function () { stop(); setStage(stage + 1); });
+  document.getElementById('evoPlay').addEventListener('click', function () {
+    if (timer) { stop(); return; }
+    setStage(0);
+    document.getElementById('evoPlay').textContent = '⏸ ' + t('evo.live');
+    timer = setInterval(function () {
+      if (stage >= STAGES.length - 1) { stop(); return; }
+      setStage(stage + 1);
+    }, 2200);
+  });
+  gridChk.addEventListener('change', render);
+  spaceChk.addEventListener('change', render);
+  frame.addEventListener('load', updateScores);
+
+  /* 浏览器标题跟随语言 */
+  function syncTitle() {
+    var k = 'doc.portal';
+    var v = (window.I18N && window.I18N.translate)
+      ? window.I18N.translate(k) : null;
+    if (v) document.title = v;
+  }
+  syncTitle();
+
+  document.addEventListener('langchange', function () {
+    syncTitle();
+    whyBox.textContent = t('evo.w' + stage);
+    if (!timer) document.getElementById('evoPlay').textContent = t('evo.play');
+    updateScores();
+  });
+
+  setStage(0);
+})();
+</script>
+</body>
+</html>

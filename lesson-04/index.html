@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>第 4 章 · 页面布局 / Chapter 4 · Page Layout</title>
+<script>
+/* 标题跟随语言：
+   ① 首屏从 URL 的 ?lang= 读取（localStorage 在 file:// 下不跨页面持久化）
+   ② 之后由 langchange 事件驱动，按 L 键或点语言开关也会同步更新 */
+(function () {
+  var CH = 4;
+  function setTitle(lang) {
+    document.title = (lang === 'en-US' || lang === 'en')
+      ? 'Chapter ' + CH + ' · Page Layout'
+      : '第 ' + CH + ' 章 · 页面布局';
+  }
+  try {
+    var m = /[?&]lang=([^&#]+)/.exec(location.search);
+    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    if (v) setTitle(v.indexOf('en') === 0 ? 'en-US' : 'zh-CN');
+  } catch (e) {}
+  document.addEventListener('langchange', function (ev) {
+    setTitle(ev.detail && ev.detail.lang);
+  });
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f7f4ed'/%3E%3Ctext x='32' y='45' font-family='Songti SC,Georgia,serif' font-size='44' font-weight='600' fill='%23bc4a24' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<nav class="course-topbar" data-current="4">
+  <a class="brand" href="../index.html">
+    <span class="back">←</span><span class="logo-dot">L</span>
+    <span data-i18n="nav.home"></span>
+  </a>
+  <ul class="tabs">
+    <li><a href="../lesson-01/index.html" data-ch="1" data-i18n="nav.ch1"></a></li>
+    <li><a href="../lesson-02/index.html" data-ch="2" data-i18n="nav.ch2"></a></li>
+    <li><a href="../lesson-03/index.html" data-ch="3" data-i18n="nav.ch3"></a></li>
+    <li><a href="../lesson-04/index.html" data-ch="4" data-i18n="nav.ch4"></a></li>
+    <li><a href="../lesson-05/index.html" data-ch="5" data-i18n="nav.ch5"></a></li>
+    <li><a href="../lesson-06/index.html" data-ch="6" data-i18n="nav.ch6"></a></li>
+    <li><a href="../lesson-07/index.html" data-ch="7" data-i18n="nav.ch7"></a></li>
+  </ul>
+  <div class="lang-switch">
+    <button data-set-lang="zh-CN" class="active">中文</button>
+    <button data-set-lang="en-US">EN</button>
+  </div>
+</nav>
+
+<!-- ============ 章节头 ============ -->
+<header class="lesson-header" data-folio="Chapter 4 / 07 — Plate 01–03">
+  <div>
+    <h1><span class="chip">CH 04</span><span data-i18n="L4.title"></span></h1>
+    <p class="subtitle" data-i18n="L4.subtitle"></p>
+  </div>
+  <div class="header-tip">
+    <span class="kbd">Tab</span> <span data-i18n="tip.tab"></span> ·
+    <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span>
+    <span data-i18n="tip.tabs"></span> ·
+    <span class="kbd">L</span> <span data-i18n="tip.lang"></span>
+  </div>
+</header>
+
+<main class="lesson-main">
+  <!-- 左侧章节目录 -->
+  <aside class="chapter-nav">
+    <h3 data-i18n="common.chapter"></h3>
+    <ul>
+        <li><a href="#ch-4-1" data-chapter="ch-4-1" class="active" data-i18n="L4.sec1.h"></a></li>
+        <li><a href="#ch-4-2" data-chapter="ch-4-2" data-i18n="L4.sec2.h"></a></li>
+        <li><a href="#ch-4-3" data-chapter="ch-4-3" data-i18n="L4.sec3.h"></a></li>
+    </ul>
+    <div class="nav-tip">
+      <a href="../index.html">↗ <span data-i18n="common.portal"></span></a><br>
+      <a href="../index.html#live">↗ <span data-i18n="common.demo"></span></a>
+    </div>
+  </aside>
+
+  <!-- 章节内容 -->
+  <section class="chapter-content">
+
+      <!-- ============= 4.1 ============= -->
+      <article class="chapter active" id="ch-4-1"
+               data-plate="Plate 4.1">
+        <h2><span class="num" data-i18n="L4.sec1.num"></span><span class="ttl" data-i18n="L4.sec1.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L4.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L4.intro.p"></p>
+              <p data-i18n-html="L4.sec1.p1"></p>
+              <h4 data-i18n="L4.sec1.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L4.sec1.th1"></th><th data-i18n="L4.sec1.th2"></th><th data-i18n="L4.sec1.th3"></th></tr></thead><tbody><tr><td data-i18n-html="L4.sec1.r1a"></td><td data-i18n-html="L4.sec1.r1b"></td><td data-i18n-html="L4.sec1.r1c"></td></tr><tr><td data-i18n-html="L4.sec1.r2a"></td><td data-i18n-html="L4.sec1.r2b"></td><td data-i18n-html="L4.sec1.r2c"></td></tr><tr><td data-i18n-html="L4.sec1.r3a"></td><td data-i18n-html="L4.sec1.r3b"></td><td data-i18n-html="L4.sec1.r3c"></td></tr></tbody></table>
+              <p data-i18n-html="L4.sec1.p2"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L4.code1.t"></h3>
+            <p class="code-purpose" data-i18n-html="L4.code1.p"></p>
+            <pre><code class="lang-css">/* 用“画图”的方式写整页骨架：代码可读性 = 视觉结构 */
+.page {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "side   main   main"
+    "footer footer footer";
+  grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  gap: 20px;
+  min-height: 100dvh;
+}
+
+.header { grid-area: header; }
+.side   { grid-area: side;   }
+.main   { grid-area: main;   }
+.footer { grid-area: footer; }
+
+/* 相邻格子写同一个名字 = 自动合并成一个跨列区域；
+   用 . 表示空格子；不需要为每个元素算线号 */
+
+/* 响应式：只改这张“图”，其他规则一行都不用动 */
+@media (max-width: 640px) {
+  .page {
+    grid-template-areas: "header" "main" "side" "footer";
+    grid-template-columns: minmax(0, 1fr);
+  }
+}</code></pre>
+            <p class="key-point" data-i18n-html="L4.code1.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L4.demo1.hint"></p>
+            <div class="demo-mount" data-demo="d4-grid"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 4.2 ============= -->
+      <article class="chapter" id="ch-4-2"
+               data-plate="Plate 4.2">
+        <h2><span class="num" data-i18n="L4.sec2.num"></span><span class="ttl" data-i18n="L4.sec2.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L4.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L4.sec2.p1"></p>
+              <h4 data-i18n="L4.sec2.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L4.sec2.th1"></th><th data-i18n="L4.sec2.th2"></th><th data-i18n="L4.sec2.th3"></th></tr></thead><tbody><tr><td data-i18n-html="L4.sec2.r1a"></td><td data-i18n-html="L4.sec2.r1b"></td><td data-i18n-html="L4.sec2.r1c"></td></tr><tr><td data-i18n-html="L4.sec2.r2a"></td><td data-i18n-html="L4.sec2.r2b"></td><td data-i18n-html="L4.sec2.r2c"></td></tr></tbody></table>
+              <p data-i18n-html="L4.sec2.p2"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L4.code2.t"></h3>
+            <p class="code-purpose" data-i18n-html="L4.code2.p"></p>
+            <pre><code class="lang-css">/* 一行 CSS 取代三到四个断点：不写媒体查询的响应式卡片区 */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* minmax 的最小值由“内容”决定，而不是由设备型号决定：
+   240px = 卡片里最长那行文字不换行所需的宽度 */
+
+/* auto-fit vs auto-fill：差别只在空轨道是否被折叠 */
+.cards--fit  { grid-template-columns: repeat(auto-fit,  minmax(240px, 1fr)); }
+/* auto-fit  ：空轨道折叠，剩余卡片拉伸填满整行
+   auto-fill ：空轨道保留，卡片保持最小宽度，右侧留白 */
+
+/* 传统写法（对比用）：三个断点 + 手算百分比宽度 */
+@media (min-width: 768px)  { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+/* 问题：768–1100px 之间是死区；组件放进窄侧栏时完全不适用 */</code></pre>
+            <p class="key-point" data-i18n-html="L4.code2.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L4.demo2.hint"></p>
+            <div class="demo-mount" data-demo="d4-autofit"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 4.3 ============= -->
+      <article class="chapter" id="ch-4-3"
+               data-plate="Plate 4.3">
+        <h2><span class="num" data-i18n="L4.sec3.num"></span><span class="ttl" data-i18n="L4.sec3.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L4.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L4.sec3.p1"></p>
+              <h4 data-i18n="L4.sec3.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L4.sec3.th1"></th><th data-i18n="L4.sec3.th2"></th><th data-i18n="L4.sec3.th3"></th><th data-i18n="L4.sec3.th4"></th></tr></thead><tbody><tr><td data-i18n-html="L4.sec3.r1a"></td><td data-i18n-html="L4.sec3.r1b"></td><td data-i18n-html="L4.sec3.r1c"></td><td data-i18n-html="L4.sec3.r1d"></td></tr><tr><td data-i18n-html="L4.sec3.r2a"></td><td data-i18n-html="L4.sec3.r2b"></td><td data-i18n-html="L4.sec3.r2c"></td><td data-i18n-html="L4.sec3.r2d"></td></tr></tbody></table>
+              <p class="note" data-i18n-html="L4.sec3.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L4.code3.t"></h3>
+            <p class="code-purpose" data-i18n-html="L4.code3.p"></p>
+            <pre><code class="lang-css">/* 1fr 的最小值是 auto，不保证收缩。
+   含长 URL / &lt;pre&gt; / 宽表格的网格项目会把轨道顶宽 */
+
+/* ❌ 长内容会把轨道顶宽，出现横向滚动条 */
+.grid--bad  { grid-template-columns: 200px 1fr; }
+
+/* ✅ 显式允许缩到 0 */
+.grid--good { grid-template-columns: 200px minmax(0, 1fr); }
+
+/* 同样的规则适用于 flex 项目 */
+.flex--good &gt; * { min-width: 0; }
+
+/* 再把不可避免的滚动限制在元素内部 */
+.grid--good &gt; * { overflow-x: auto; }
+
+/* 完整的三件套：
+   ① minmax(0, 1fr)  允许轨道收缩
+   ② min-width: 0    允许 flex 项目收缩
+   ③ overflow-x: auto 把滚动限制在元素内部
+   缺任何一件，横向滚动条都会跑到整页上 */</code></pre>
+            <p class="key-point" data-i18n-html="L4.code3.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L4.demo3.hint"></p>
+            <div class="demo-mount" data-demo="d4-areas"></div>
+          </div>
+        </div>
+      </article>
+  </section>
+</main>
+
+<footer class="lesson-footer">
+  <p data-i18n="footer.case"></p>
+  <p data-i18n="footer.note"></p>
+</footer>
+
+<nav class="chapter-pager">
+  <a class="pager-prev" href="../lesson-03/index.html"><span class="pager-dir" data-i18n="common.prev"></span><span class="pager-title" data-i18n="nav.ch3"></span></a>
+  <a class="pager-portal" href="../index.html" data-i18n="common.portal"></a>
+  <a class="pager-next" href="../lesson-05/index.html"><span class="pager-dir" data-i18n="common.next"></span><span class="pager-title" data-i18n="nav.ch5"></span></a>
+</nav>
+
+<script src="../i18n.js"></script>
+<script src="../lesson-content.js"></script>
+<script src="../site.js"></script>
+<script src="../demos.js"></script>
+</body>
+</html>

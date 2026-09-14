@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>第 7 章 · 页面布局 / Chapter 7 · Page Layout</title>
+<script>
+/* 标题跟随语言：
+   ① 首屏从 URL 的 ?lang= 读取（localStorage 在 file:// 下不跨页面持久化）
+   ② 之后由 langchange 事件驱动，按 L 键或点语言开关也会同步更新 */
+(function () {
+  var CH = 7;
+  function setTitle(lang) {
+    document.title = (lang === 'en-US' || lang === 'en')
+      ? 'Chapter ' + CH + ' · Page Layout'
+      : '第 ' + CH + ' 章 · 页面布局';
+  }
+  try {
+    var m = /[?&]lang=([^&#]+)/.exec(location.search);
+    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    if (v) setTitle(v.indexOf('en') === 0 ? 'en-US' : 'zh-CN');
+  } catch (e) {}
+  document.addEventListener('langchange', function (ev) {
+    setTitle(ev.detail && ev.detail.lang);
+  });
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f7f4ed'/%3E%3Ctext x='32' y='45' font-family='Songti SC,Georgia,serif' font-size='44' font-weight='600' fill='%23bc4a24' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<nav class="course-topbar" data-current="7">
+  <a class="brand" href="../index.html">
+    <span class="back">←</span><span class="logo-dot">L</span>
+    <span data-i18n="nav.home"></span>
+  </a>
+  <ul class="tabs">
+    <li><a href="../lesson-01/index.html" data-ch="1" data-i18n="nav.ch1"></a></li>
+    <li><a href="../lesson-02/index.html" data-ch="2" data-i18n="nav.ch2"></a></li>
+    <li><a href="../lesson-03/index.html" data-ch="3" data-i18n="nav.ch3"></a></li>
+    <li><a href="../lesson-04/index.html" data-ch="4" data-i18n="nav.ch4"></a></li>
+    <li><a href="../lesson-05/index.html" data-ch="5" data-i18n="nav.ch5"></a></li>
+    <li><a href="../lesson-06/index.html" data-ch="6" data-i18n="nav.ch6"></a></li>
+    <li><a href="../lesson-07/index.html" data-ch="7" data-i18n="nav.ch7"></a></li>
+  </ul>
+  <div class="lang-switch">
+    <button data-set-lang="zh-CN" class="active">中文</button>
+    <button data-set-lang="en-US">EN</button>
+  </div>
+</nav>
+
+<!-- ============ 章节头 ============ -->
+<header class="lesson-header" data-folio="Chapter 7 / 07 — Plate 01–03">
+  <div>
+    <h1><span class="chip">CH 07</span><span data-i18n="L7.title"></span></h1>
+    <p class="subtitle" data-i18n="L7.subtitle"></p>
+  </div>
+  <div class="header-tip">
+    <span class="kbd">Tab</span> <span data-i18n="tip.tab"></span> ·
+    <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span>
+    <span data-i18n="tip.tabs"></span> ·
+    <span class="kbd">L</span> <span data-i18n="tip.lang"></span>
+  </div>
+</header>
+
+<main class="lesson-main">
+  <!-- 左侧章节目录 -->
+  <aside class="chapter-nav">
+    <h3 data-i18n="common.chapter"></h3>
+    <ul>
+        <li><a href="#ch-7-1" data-chapter="ch-7-1" class="active" data-i18n="L7.sec1.h"></a></li>
+        <li><a href="#ch-7-2" data-chapter="ch-7-2" data-i18n="L7.sec2.h"></a></li>
+        <li><a href="#ch-7-3" data-chapter="ch-7-3" data-i18n="L7.sec3.h"></a></li>
+    </ul>
+    <div class="nav-tip">
+      <a href="../index.html">↗ <span data-i18n="common.portal"></span></a><br>
+      <a href="../index.html#live">↗ <span data-i18n="common.demo"></span></a>
+    </div>
+  </aside>
+
+  <!-- 章节内容 -->
+  <section class="chapter-content">
+
+      <!-- ============= 7.1 ============= -->
+      <article class="chapter active" id="ch-7-1"
+               data-plate="Plate 7.1">
+        <h2><span class="num" data-i18n="L7.sec1.num"></span><span class="ttl" data-i18n="L7.sec1.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L7.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L7.intro.p"></p>
+              <p data-i18n-html="L7.sec1.p1"></p>
+              <h4 data-i18n="L7.sec1.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L7.sec1.th1"></th><th data-i18n="L7.sec1.th2"></th><th data-i18n="L7.sec1.th3"></th><th data-i18n="L7.sec1.th4"></th></tr></thead><tbody><tr><td data-i18n-html="L7.sec1.r1a"></td><td data-i18n-html="L7.sec1.r1b"></td><td data-i18n-html="L7.sec1.r1c"></td><td data-i18n-html="L7.sec1.r1d"></td></tr><tr><td data-i18n-html="L7.sec1.r2a"></td><td data-i18n-html="L7.sec1.r2b"></td><td data-i18n-html="L7.sec1.r2c"></td><td data-i18n-html="L7.sec1.r2d"></td></tr><tr><td data-i18n-html="L7.sec1.r3a"></td><td data-i18n-html="L7.sec1.r3b"></td><td data-i18n-html="L7.sec1.r3c"></td><td data-i18n-html="L7.sec1.r3d"></td></tr><tr><td data-i18n-html="L7.sec1.r4a"></td><td data-i18n-html="L7.sec1.r4b"></td><td data-i18n-html="L7.sec1.r4c"></td><td data-i18n-html="L7.sec1.r4d"></td></tr><tr><td data-i18n-html="L7.sec1.r5a"></td><td data-i18n-html="L7.sec1.r5b"></td><td data-i18n-html="L7.sec1.r5c"></td><td data-i18n-html="L7.sec1.r5d"></td></tr><tr><td data-i18n-html="L7.sec1.r6a"></td><td data-i18n-html="L7.sec1.r6b"></td><td data-i18n-html="L7.sec1.r6c"></td><td data-i18n-html="L7.sec1.r6d"></td></tr><tr><td data-i18n-html="L7.sec1.r7a"></td><td data-i18n-html="L7.sec1.r7b"></td><td data-i18n-html="L7.sec1.r7c"></td><td data-i18n-html="L7.sec1.r7d"></td></tr><tr><td data-i18n-html="L7.sec1.r8a"></td><td data-i18n-html="L7.sec1.r8b"></td><td data-i18n-html="L7.sec1.r8c"></td><td data-i18n-html="L7.sec1.r8d"></td></tr><tr><td data-i18n-html="L7.sec1.r9a"></td><td data-i18n-html="L7.sec1.r9b"></td><td data-i18n-html="L7.sec1.r9c"></td><td data-i18n-html="L7.sec1.r9d"></td></tr><tr><td data-i18n-html="L7.sec1.r10a"></td><td data-i18n-html="L7.sec1.r10b"></td><td data-i18n-html="L7.sec1.r10c"></td><td data-i18n-html="L7.sec1.r10d"></td></tr></tbody></table>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L7.code1.t"></h3>
+            <p class="code-purpose" data-i18n-html="L7.code1.p"></p>
+            <pre><code class="lang-css">/* 用设计令牌驱动密度切换：把设计决策变量化 */
+:root {
+  --pad: 16px;   /* 组件内边距 */
+  --gap: 20px;   /* 组件之间 */
+  --fs:  15px;   /* 正文字号 */
+  --lh:  1.65;   /* 行高 */
+  --hero: 44px;  /* 标题上限 */
+}
+[data-density="compact"] { --pad: 10px; --gap: 12px; --fs: 13px;   --lh: 1.5; --hero: 34px; }
+[data-density="comfy"]   { --pad: 24px; --gap: 30px; --fs: 16.5px; --lh: 1.8; --hero: 52px; }
+
+/* 所有组件只引用变量，不写死数值 */
+body     { font-size: var(--fs); line-height: var(--lh); }
+.cards   { display: grid; gap: var(--gap); }
+.card    { padding: var(--pad); border-radius: 14px; }
+.hero h1 { font-size: clamp(calc(var(--hero) * .62), 4.4vw, var(--hero)); }
+
+/* ✅ 切换密度只改变量 → 比例关系保持不变，变的是尺度
+   ❌ 若组件里写死 padding:16px，一次全局调整要改几十处 */
+
+/* 主题同理：换的是令牌，不是布局规则 */
+[data-theme="dark"] { --bg: #14100c; --tx: #f4ece0; --line: #3a2e24; }</code></pre>
+            <p class="key-point" data-i18n-html="L7.code1.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L7.demo1.hint"></p>
+            <div class="demo-mount" data-demo="d7-pitfalls"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 7.2 ============= -->
+      <article class="chapter" id="ch-7-2"
+               data-plate="Plate 7.2">
+        <h2><span class="num" data-i18n="L7.sec2.num"></span><span class="ttl" data-i18n="L7.sec2.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L7.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L7.sec2.p1"></p>
+              <ol><li data-i18n-html="L7.sec2.ol1"></li><li data-i18n-html="L7.sec2.ol2"></li><li data-i18n-html="L7.sec2.ol3"></li><li data-i18n-html="L7.sec2.ol4"></li><li data-i18n-html="L7.sec2.ol5"></li><li data-i18n-html="L7.sec2.ol6"></li><li data-i18n-html="L7.sec2.ol7"></li><li data-i18n-html="L7.sec2.ol8"></li></ol>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L7.code2.t"></h3>
+            <p class="code-purpose" data-i18n-html="L7.code2.p"></p>
+            <pre><code class="lang-css">/* ===== 交付级布局骨架：六章知识的合成 ===== */
+*, *::before, *::after { box-sizing: border-box; }        /* 第 2 章 */
+
+body {
+  margin: 0;
+  font-size: clamp(15px, 0.9rem + 0.25vw, 17px);          /* 第 6 章 */
+  line-height: 1.65;
+  overflow-wrap: anywhere;                                 /* 第 2 章 */
+}
+
+.nav {
+  position: sticky; top: 0; z-index: var(--z-sticky);      /* 第 5 章 */
+  display: flex; align-items: center;
+  justify-content: space-between; gap: var(--gap);         /* 第 3 章 */
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.page {
+  display: grid;
+  grid-template-areas: "header header" "side main" "footer footer";
+  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  gap: var(--gap);                                          /* 第 4 章 */
+  max-width: 1040px; margin-inline: auto;
+  min-height: 100dvh;                                       /* 第 6 章 */
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--gap);
+}
+
+.card {
+  display: flex; flex-direction: column;                    /* 第 3 章 */
+  padding: var(--pad);                                      /* 第 7 章 */
+  min-width: 0;                                             /* 第 4 章 */
+}
+.card__cta { margin-top: auto; }                            /* 第 3 章 */
+
+img { max-width: 100%; height: auto; aspect-ratio: 16 / 10; } /* 第 7 章 */
+
+@media (max-width: 700px) {
+  .page {
+    grid-template-areas: "header" "main" "side" "footer";
+    grid-template-columns: minmax(0, 1fr);
+  }
+}</code></pre>
+            <p class="key-point" data-i18n-html="L7.code2.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L7.demo2.hint"></p>
+            <div class="demo-mount" data-demo="d7-checklist"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 7.3 ============= -->
+      <article class="chapter" id="ch-7-3"
+               data-plate="Plate 7.3">
+        <h2><span class="num" data-i18n="L7.sec3.num"></span><span class="ttl" data-i18n="L7.sec3.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L7.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L7.sec3.p1"></p>
+              <p class="note" data-i18n-html="L7.sec3.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L7.code3.t"></h3>
+            <p class="code-purpose" data-i18n-html="L7.code3.p"></p>
+            <pre><code class="lang-css">/* 可复用的一次性体检：直接粘进 DevTools Console 运行 */
+function preflight() {
+  const de = document.documentElement;
+  const issues = [];
+
+  // ① 横向溢出
+  const over = de.scrollWidth - de.clientWidth;
+  if (over &gt; 1) issues.push(`横向溢出 ${over}px，检查 min-width:0 / max-width:100%`);
+
+  // ② 触控目标
+  document.querySelectorAll('a, button').forEach(el =&gt; {
+    const r = el.getBoundingClientRect();
+    if (r.width &amp;&amp; (r.height &lt; 44 || r.width &lt; 44))
+      issues.push(`触控目标过小 ${Math.round(r.width)}×${Math.round(r.height)}:`, el);
+  });
+
+  // ③ 层级比
+  const h1 = document.querySelector('h1'), p = document.querySelector('p');
+  if (h1 &amp;&amp; p) {
+    const ratio = parseFloat(getComputedStyle(h1).fontSize)
+                / parseFloat(getComputedStyle(p).fontSize);
+    if (ratio &lt; 2) issues.push(`标题层级不足：h1/p = ${ratio.toFixed(2)}×，建议 ≥ 2`);
+  }
+
+  // ④ 图片缺少尺寸约束
+  document.querySelectorAll('img').forEach(img =&gt; {
+    if (getComputedStyle(img).maxWidth !== '100%')
+      issues.push('图片缺少 max-width:100%：', img);
+  });
+
+  // ⑤ 祖先 overflow 是否吃掉了 sticky
+  document.querySelectorAll('.sticky').forEach(el =&gt; {
+    for (let q = el.parentElement; q; q = q.parentElement) {
+      if (getComputedStyle(q).overflow !== 'visible') {
+        issues.push('sticky 被祖先 overflow 限制：', q); break;
+      }
+    }
+  });
+
+  console.table(issues);
+  return issues.length ? issues : '✓ 全部通过';
+}</code></pre>
+            <p class="key-point" data-i18n-html="L7.code3.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L7.demo3.hint"></p>
+            <div class="demo-mount" data-demo="d7-final"></div>
+          </div>
+        </div>
+      </article>
+  </section>
+</main>
+
+<footer class="lesson-footer">
+  <p data-i18n="footer.case"></p>
+  <p data-i18n="footer.note"></p>
+</footer>
+
+<nav class="chapter-pager">
+  <a class="pager-prev" href="../lesson-06/index.html"><span class="pager-dir" data-i18n="common.prev"></span><span class="pager-title" data-i18n="nav.ch6"></span></a>
+  <a class="pager-portal" href="../index.html" data-i18n="common.portal"></a>
+  <span class="pager-next empty"></span>
+</nav>
+
+<script src="../i18n.js"></script>
+<script src="../lesson-content.js"></script>
+<script src="../site.js"></script>
+<script src="../demos.js"></script>
+</body>
+</html>

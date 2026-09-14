@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>第 5 章 · 页面布局 / Chapter 5 · Page Layout</title>
+<script>
+/* 标题跟随语言：
+   ① 首屏从 URL 的 ?lang= 读取（localStorage 在 file:// 下不跨页面持久化）
+   ② 之后由 langchange 事件驱动，按 L 键或点语言开关也会同步更新 */
+(function () {
+  var CH = 5;
+  function setTitle(lang) {
+    document.title = (lang === 'en-US' || lang === 'en')
+      ? 'Chapter ' + CH + ' · Page Layout'
+      : '第 ' + CH + ' 章 · 页面布局';
+  }
+  try {
+    var m = /[?&]lang=([^&#]+)/.exec(location.search);
+    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    if (v) setTitle(v.indexOf('en') === 0 ? 'en-US' : 'zh-CN');
+  } catch (e) {}
+  document.addEventListener('langchange', function (ev) {
+    setTitle(ev.detail && ev.detail.lang);
+  });
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f7f4ed'/%3E%3Ctext x='32' y='45' font-family='Songti SC,Georgia,serif' font-size='44' font-weight='600' fill='%23bc4a24' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<nav class="course-topbar" data-current="5">
+  <a class="brand" href="../index.html">
+    <span class="back">←</span><span class="logo-dot">L</span>
+    <span data-i18n="nav.home"></span>
+  </a>
+  <ul class="tabs">
+    <li><a href="../lesson-01/index.html" data-ch="1" data-i18n="nav.ch1"></a></li>
+    <li><a href="../lesson-02/index.html" data-ch="2" data-i18n="nav.ch2"></a></li>
+    <li><a href="../lesson-03/index.html" data-ch="3" data-i18n="nav.ch3"></a></li>
+    <li><a href="../lesson-04/index.html" data-ch="4" data-i18n="nav.ch4"></a></li>
+    <li><a href="../lesson-05/index.html" data-ch="5" data-i18n="nav.ch5"></a></li>
+    <li><a href="../lesson-06/index.html" data-ch="6" data-i18n="nav.ch6"></a></li>
+    <li><a href="../lesson-07/index.html" data-ch="7" data-i18n="nav.ch7"></a></li>
+  </ul>
+  <div class="lang-switch">
+    <button data-set-lang="zh-CN" class="active">中文</button>
+    <button data-set-lang="en-US">EN</button>
+  </div>
+</nav>
+
+<!-- ============ 章节头 ============ -->
+<header class="lesson-header" data-folio="Chapter 5 / 07 — Plate 01–03">
+  <div>
+    <h1><span class="chip">CH 05</span><span data-i18n="L5.title"></span></h1>
+    <p class="subtitle" data-i18n="L5.subtitle"></p>
+  </div>
+  <div class="header-tip">
+    <span class="kbd">Tab</span> <span data-i18n="tip.tab"></span> ·
+    <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span>
+    <span data-i18n="tip.tabs"></span> ·
+    <span class="kbd">L</span> <span data-i18n="tip.lang"></span>
+  </div>
+</header>
+
+<main class="lesson-main">
+  <!-- 左侧章节目录 -->
+  <aside class="chapter-nav">
+    <h3 data-i18n="common.chapter"></h3>
+    <ul>
+        <li><a href="#ch-5-1" data-chapter="ch-5-1" class="active" data-i18n="L5.sec1.h"></a></li>
+        <li><a href="#ch-5-2" data-chapter="ch-5-2" data-i18n="L5.sec2.h"></a></li>
+        <li><a href="#ch-5-3" data-chapter="ch-5-3" data-i18n="L5.sec3.h"></a></li>
+    </ul>
+    <div class="nav-tip">
+      <a href="../index.html">↗ <span data-i18n="common.portal"></span></a><br>
+      <a href="../index.html#live">↗ <span data-i18n="common.demo"></span></a>
+    </div>
+  </aside>
+
+  <!-- 章节内容 -->
+  <section class="chapter-content">
+
+      <!-- ============= 5.1 ============= -->
+      <article class="chapter active" id="ch-5-1"
+               data-plate="Plate 5.1">
+        <h2><span class="num" data-i18n="L5.sec1.num"></span><span class="ttl" data-i18n="L5.sec1.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L5.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L5.intro.p"></p>
+              <h4 data-i18n="L5.sec1.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L5.sec1.th1"></th><th data-i18n="L5.sec1.th2"></th><th data-i18n="L5.sec1.th3"></th><th data-i18n="L5.sec1.th4"></th></tr></thead><tbody><tr><td data-i18n-html="L5.sec1.r1a"></td><td data-i18n-html="L5.sec1.r1b"></td><td data-i18n-html="L5.sec1.r1c"></td><td data-i18n-html="L5.sec1.r1d"></td></tr><tr><td data-i18n-html="L5.sec1.r2a"></td><td data-i18n-html="L5.sec1.r2b"></td><td data-i18n-html="L5.sec1.r2c"></td><td data-i18n-html="L5.sec1.r2d"></td></tr><tr><td data-i18n-html="L5.sec1.r3a"></td><td data-i18n-html="L5.sec1.r3b"></td><td data-i18n-html="L5.sec1.r3c"></td><td data-i18n-html="L5.sec1.r3d"></td></tr><tr><td data-i18n-html="L5.sec1.r4a"></td><td data-i18n-html="L5.sec1.r4b"></td><td data-i18n-html="L5.sec1.r4c"></td><td data-i18n-html="L5.sec1.r4d"></td></tr><tr><td data-i18n-html="L5.sec1.r5a"></td><td data-i18n-html="L5.sec1.r5b"></td><td data-i18n-html="L5.sec1.r5c"></td><td data-i18n-html="L5.sec1.r5d"></td></tr></tbody></table>
+              <p class="note" data-i18n-html="L5.sec1.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L5.code1.t"></h3>
+            <p class="code-purpose" data-i18n-html="L5.code1.p"></p>
+            <pre><code class="lang-css">/* 可用的吸顶导航：三件事缺一不可 */
+.nav {
+  position: sticky;
+  top: 0;                             /* ① 必须有阈值，否则等于没写 */
+  z-index: var(--z-sticky);           /* ② 必须抬高层级 */
+  background: rgba(255,255,255,.86);  /* ③ 必须有背景，否则内容会透出来 */
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* ⚠️ sticky 失效的三大原因
+   ① 没写 top / bottom                → 没有粘附点
+   ② 祖先有 overflow: hidden/auto/scroll → 被限制在那个容器内
+   ③ 父元素高度 = 自身高度             → 没有可粘的距离 */
+
+/* 用脚本一次性找出“吃掉 sticky”的祖先 */
+[...document.querySelectorAll('.nav')].forEach(el =&gt; {
+  for (let p = el.parentElement; p; p = p.parentElement) {
+    const ov = getComputedStyle(p).overflow;
+    if (ov !== 'visible') console.warn('sticky 被限制在：', p, ov);
+  }
+});</code></pre>
+            <p class="key-point" data-i18n-html="L5.code1.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L5.demo1.hint"></p>
+            <div class="demo-mount" data-demo="d5-position"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 5.2 ============= -->
+      <article class="chapter" id="ch-5-2"
+               data-plate="Plate 5.2">
+        <h2><span class="num" data-i18n="L5.sec2.num"></span><span class="ttl" data-i18n="L5.sec2.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L5.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L5.sec2.p1"></p>
+              <ul><li data-i18n-html="L5.sec2.ul1"></li><li data-i18n-html="L5.sec2.ul2"></li><li data-i18n-html="L5.sec2.ul3"></li></ul>
+              <p class="note" data-i18n-html="L5.sec2.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L5.code2.t"></h3>
+            <p class="code-purpose" data-i18n-html="L5.code2.p"></p>
+            <pre><code class="lang-css">/* 卡片角标：relative 最重要的用途是“给子元素提供包含块” */
+.card {
+  position: relative;   /* 本身不移动，只是定义坐标系 */
+  /* ⚠️ 不要顺手加 z-index！那会建立层叠上下文，
+        把角标的 z-index 关进这一层里 */
+}
+
+.card__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;          /* 参照最近的“已定位”祖先 = .card */
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f43f5e;
+  color: #fff;
+  font-size: 11px;
+}
+
+/* ❌ 反例：父元素没有 position，角标会跑到“初始包含块”（页面左上角） */
+.card--bad { position: static; }
+
+/* ⚠️ 祖先有 transform / filter / will-change 时，fixed 元素
+      也会以它为包含块 —— “fixed 不固定在视口”的头号原因 */</code></pre>
+            <p class="key-point" data-i18n-html="L5.code2.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L5.demo2.hint"></p>
+            <div class="demo-mount" data-demo="d5-stack"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 5.3 ============= -->
+      <article class="chapter" id="ch-5-3"
+               data-plate="Plate 5.3">
+        <h2><span class="num" data-i18n="L5.sec3.num"></span><span class="ttl" data-i18n="L5.sec3.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L5.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L5.sec3.p1"></p>
+              <p data-i18n-html="L5.sec3.p2"></p>
+              <h4 data-i18n="L5.sec3.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L5.sec3.th1"></th><th data-i18n="L5.sec3.th2"></th></tr></thead><tbody><tr><td data-i18n-html="L5.sec3.r1a"></td><td data-i18n-html="L5.sec3.r1b"></td></tr><tr><td data-i18n-html="L5.sec3.r2a"></td><td data-i18n-html="L5.sec3.r2b"></td></tr><tr><td data-i18n-html="L5.sec3.r3a"></td><td data-i18n-html="L5.sec3.r3b"></td></tr><tr><td data-i18n-html="L5.sec3.r4a"></td><td data-i18n-html="L5.sec3.r4b"></td></tr><tr><td data-i18n-html="L5.sec3.r5a"></td><td data-i18n-html="L5.sec3.r5b"></td></tr></tbody></table>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L5.code3.t"></h3>
+            <p class="code-purpose" data-i18n-html="L5.code3.p"></p>
+            <pre><code class="lang-css">/* ❌ 不要靠“把数字写大”解决层叠问题 */
+.popover--bad { z-index: 99999; }   /* 下一个开发者会写 999999 */
+
+/* ✅ 正确做法：给页面划分有限的几层，写进设计令牌 */
+:root {
+  --z-base:     0;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+}
+
+.nav      { position: sticky; top: 0;  z-index: var(--z-sticky); }
+.dropdown { position: absolute;        z-index: var(--z-dropdown); }
+.modal    { position: fixed; inset: 0; z-index: var(--z-modal); }
+
+/* 关键：模态框最好渲染在 &lt;body&gt; 的直接子级，
+   这样它不会落进任何祖先的层叠上下文
+   （UI 库把弹层挂到 body 就是这个原因）
+   z-index 只在同一个层叠上下文内部比较，它不是全局优先级 */
+
+/* 需要主动建立层叠上下文时，用无副作用的 isolation */
+.card--isolated { isolation: isolate; }</code></pre>
+            <p class="key-point" data-i18n-html="L5.code3.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L5.demo3.hint"></p>
+            <div class="demo-mount" data-demo="d5-overflow"></div>
+          </div>
+        </div>
+      </article>
+  </section>
+</main>
+
+<footer class="lesson-footer">
+  <p data-i18n="footer.case"></p>
+  <p data-i18n="footer.note"></p>
+</footer>
+
+<nav class="chapter-pager">
+  <a class="pager-prev" href="../lesson-04/index.html"><span class="pager-dir" data-i18n="common.prev"></span><span class="pager-title" data-i18n="nav.ch4"></span></a>
+  <a class="pager-portal" href="../index.html" data-i18n="common.portal"></a>
+  <a class="pager-next" href="../lesson-06/index.html"><span class="pager-dir" data-i18n="common.next"></span><span class="pager-title" data-i18n="nav.ch6"></span></a>
+</nav>
+
+<script src="../i18n.js"></script>
+<script src="../lesson-content.js"></script>
+<script src="../site.js"></script>
+<script src="../demos.js"></script>
+</body>
+</html>

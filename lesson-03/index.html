@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>第 3 章 · 页面布局 / Chapter 3 · Page Layout</title>
+<script>
+/* 标题跟随语言：
+   ① 首屏从 URL 的 ?lang= 读取（localStorage 在 file:// 下不跨页面持久化）
+   ② 之后由 langchange 事件驱动，按 L 键或点语言开关也会同步更新 */
+(function () {
+  var CH = 3;
+  function setTitle(lang) {
+    document.title = (lang === 'en-US' || lang === 'en')
+      ? 'Chapter ' + CH + ' · Page Layout'
+      : '第 ' + CH + ' 章 · 页面布局';
+  }
+  try {
+    var m = /[?&]lang=([^&#]+)/.exec(location.search);
+    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    if (v) setTitle(v.indexOf('en') === 0 ? 'en-US' : 'zh-CN');
+  } catch (e) {}
+  document.addEventListener('langchange', function (ev) {
+    setTitle(ev.detail && ev.detail.lang);
+  });
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f7f4ed'/%3E%3Ctext x='32' y='45' font-family='Songti SC,Georgia,serif' font-size='44' font-weight='600' fill='%23bc4a24' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<nav class="course-topbar" data-current="3">
+  <a class="brand" href="../index.html">
+    <span class="back">←</span><span class="logo-dot">L</span>
+    <span data-i18n="nav.home"></span>
+  </a>
+  <ul class="tabs">
+    <li><a href="../lesson-01/index.html" data-ch="1" data-i18n="nav.ch1"></a></li>
+    <li><a href="../lesson-02/index.html" data-ch="2" data-i18n="nav.ch2"></a></li>
+    <li><a href="../lesson-03/index.html" data-ch="3" data-i18n="nav.ch3"></a></li>
+    <li><a href="../lesson-04/index.html" data-ch="4" data-i18n="nav.ch4"></a></li>
+    <li><a href="../lesson-05/index.html" data-ch="5" data-i18n="nav.ch5"></a></li>
+    <li><a href="../lesson-06/index.html" data-ch="6" data-i18n="nav.ch6"></a></li>
+    <li><a href="../lesson-07/index.html" data-ch="7" data-i18n="nav.ch7"></a></li>
+  </ul>
+  <div class="lang-switch">
+    <button data-set-lang="zh-CN" class="active">中文</button>
+    <button data-set-lang="en-US">EN</button>
+  </div>
+</nav>
+
+<!-- ============ 章节头 ============ -->
+<header class="lesson-header" data-folio="Chapter 3 / 07 — Plate 01–03">
+  <div>
+    <h1><span class="chip">CH 03</span><span data-i18n="L3.title"></span></h1>
+    <p class="subtitle" data-i18n="L3.subtitle"></p>
+  </div>
+  <div class="header-tip">
+    <span class="kbd">Tab</span> <span data-i18n="tip.tab"></span> ·
+    <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span>
+    <span data-i18n="tip.tabs"></span> ·
+    <span class="kbd">L</span> <span data-i18n="tip.lang"></span>
+  </div>
+</header>
+
+<main class="lesson-main">
+  <!-- 左侧章节目录 -->
+  <aside class="chapter-nav">
+    <h3 data-i18n="common.chapter"></h3>
+    <ul>
+        <li><a href="#ch-3-1" data-chapter="ch-3-1" class="active" data-i18n="L3.sec1.h"></a></li>
+        <li><a href="#ch-3-2" data-chapter="ch-3-2" data-i18n="L3.sec2.h"></a></li>
+        <li><a href="#ch-3-3" data-chapter="ch-3-3" data-i18n="L3.sec3.h"></a></li>
+    </ul>
+    <div class="nav-tip">
+      <a href="../index.html">↗ <span data-i18n="common.portal"></span></a><br>
+      <a href="../index.html#live">↗ <span data-i18n="common.demo"></span></a>
+    </div>
+  </aside>
+
+  <!-- 章节内容 -->
+  <section class="chapter-content">
+
+      <!-- ============= 3.1 ============= -->
+      <article class="chapter active" id="ch-3-1"
+               data-plate="Plate 3.1">
+        <h2><span class="num" data-i18n="L3.sec1.num"></span><span class="ttl" data-i18n="L3.sec1.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L3.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L3.intro.p"></p>
+              <p data-i18n-html="L3.sec1.p1"></p>
+              <p data-i18n-html="L3.sec1.p2"></p>
+              <h4 data-i18n="L3.sec1.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L3.sec1.th1"></th><th data-i18n="L3.sec1.th2"></th><th data-i18n="L3.sec1.th3"></th></tr></thead><tbody><tr><td data-i18n-html="L3.sec1.r1a"></td><td data-i18n-html="L3.sec1.r1b"></td><td data-i18n-html="L3.sec1.r1c"></td></tr><tr><td data-i18n-html="L3.sec1.r2a"></td><td data-i18n-html="L3.sec1.r2b"></td><td data-i18n-html="L3.sec1.r2c"></td></tr><tr><td data-i18n-html="L3.sec1.r3a"></td><td data-i18n-html="L3.sec1.r3b"></td><td data-i18n-html="L3.sec1.r3c"></td></tr><tr><td data-i18n-html="L3.sec1.r4a"></td><td data-i18n-html="L3.sec1.r4b"></td><td data-i18n-html="L3.sec1.r4c"></td></tr><tr><td data-i18n-html="L3.sec1.r5a"></td><td data-i18n-html="L3.sec1.r5b"></td><td data-i18n-html="L3.sec1.r5c"></td></tr><tr><td data-i18n-html="L3.sec1.r6a"></td><td data-i18n-html="L3.sec1.r6b"></td><td data-i18n-html="L3.sec1.r6c"></td></tr></tbody></table>
+              <p class="note" data-i18n-html="L3.sec1.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L3.code1.t"></h3>
+            <p class="code-purpose" data-i18n-html="L3.code1.p"></p>
+            <pre><code class="lang-css">/* 导航条：两端对齐 + 垂直居中，各一行 */
+.nav {
+  display: flex;
+  align-items: center;            /* 交叉轴：中线对齐 */
+  justify-content: space-between; /* 主轴：首尾贴边 */
+  gap: 16px;
+  padding: 12px 20px;
+}
+
+/* 左右字号不同时，基线对齐往往比中线对齐更“正” */
+.nav--baseline { align-items: baseline; }
+
+/* 按钮组内部的间距用 gap，而不是给每个按钮加 margin */
+.nav__links { display: flex; align-items: center; gap: 18px; }
+
+/* 不要用 space-between 做“均匀分布”：
+   它描述的是端点与容器的关系，gap 描述的才是元素之间的关系 */
+.toolbar     { display: flex; gap: 8px; }                       /* ✅ */
+.toolbar--bad{ display: flex; justify-content: space-around; }  /* △ 语义含糊 */</code></pre>
+            <p class="key-point" data-i18n-html="L3.code1.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L3.demo1.hint"></p>
+            <div class="demo-mount" data-demo="d3-axis"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 3.2 ============= -->
+      <article class="chapter" id="ch-3-2"
+               data-plate="Plate 3.2">
+        <h2><span class="num" data-i18n="L3.sec2.num"></span><span class="ttl" data-i18n="L3.sec2.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L3.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L3.sec2.p1"></p>
+              <h4 data-i18n="L3.sec2.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L3.sec2.th1"></th><th data-i18n="L3.sec2.th2"></th><th data-i18n="L3.sec2.th3"></th></tr></thead><tbody><tr><td data-i18n-html="L3.sec2.r1a"></td><td data-i18n-html="L3.sec2.r1b"></td><td data-i18n-html="L3.sec2.r1c"></td></tr><tr><td data-i18n-html="L3.sec2.r2a"></td><td data-i18n-html="L3.sec2.r2b"></td><td data-i18n-html="L3.sec2.r2c"></td></tr><tr><td data-i18n-html="L3.sec2.r3a"></td><td data-i18n-html="L3.sec2.r3b"></td><td data-i18n-html="L3.sec2.r3c"></td></tr><tr><td data-i18n-html="L3.sec2.r4a"></td><td data-i18n-html="L3.sec2.r4b"></td><td data-i18n-html="L3.sec2.r4c"></td></tr></tbody></table>
+              <p data-i18n-html="L3.sec2.p2"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L3.code2.t"></h3>
+            <p class="code-purpose" data-i18n-html="L3.code2.p"></p>
+            <pre><code class="lang-css">/* 卡片底部对齐：让“查看案例”链接永远贴底 */
+.card {
+  display: flex;
+  flex-direction: column;   /* 主轴变成纵向 */
+  gap: 8px;
+  padding: 16px;
+}
+
+.card__thumb { aspect-ratio: 16 / 10; border-radius: 10px; }
+
+/* margin-top:auto 会吃掉所有剩余空间，把链接推到底部 ——
+   这是 flex 容器里 margin:auto 的特殊语义 */
+.card__cta { margin-top: auto; }
+
+/* 同一个技巧也用于水平居中 */
+.center-x { margin-inline: auto; }
+
+/* ⚠️ 只在 flex / grid 容器里有效；
+   普通块布局中 margin:auto 不会吸收剩余空间 */</code></pre>
+            <p class="key-point" data-i18n-html="L3.code2.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L3.demo2.hint"></p>
+            <div class="demo-mount" data-demo="d3-grow"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 3.3 ============= -->
+      <article class="chapter" id="ch-3-3"
+               data-plate="Plate 3.3">
+        <h2><span class="num" data-i18n="L3.sec3.num"></span><span class="ttl" data-i18n="L3.sec3.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L3.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L3.sec3.p1"></p>
+              <ul><li data-i18n-html="L3.sec3.ul1"></li><li data-i18n-html="L3.sec3.ul2"></li><li data-i18n-html="L3.sec3.ul3"></li></ul>
+              <p class="note" data-i18n-html="L3.sec3.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L3.code3.t"></h3>
+            <p class="code-purpose" data-i18n-html="L3.code3.p"></p>
+            <pre><code class="lang-css">/* flex: 1    = 1 1 0%   → 严格等宽（忽略内容多少）
+   flex: auto = 1 1 auto → 按内容比例分配（内容多的更宽） */
+
+/* ✅ 等宽三栏 */
+.grid-3 &gt; * { flex: 1; }
+
+/* ✅ 侧栏固定 + 主区自适应 */
+.layout { display: flex; gap: 24px; }
+.layout__side { flex: 0 0 280px; }        /* 不伸不缩，固定 280px */
+.layout__main { flex: 1; min-width: 0; }  /* 吸收剩余；min-width 必须显式写 0 */
+
+/* ✅ 2 : 1 比例 */
+.split &gt; :first-child { flex: 2; }
+.split &gt; :last-child  { flex: 1; }
+
+/* 分配公式：
+   最终宽度 = flex-basis + 剩余空间 × (自己的 grow ÷ Σgrow)
+   剩余为负时，按 flex-shrink × flex-basis 加权吸收
+
+   ⚠️ flex 项目的默认最小尺寸是 auto（不小于内容宽度），
+      长内容会把它顶宽并产生横向滚动条 */</code></pre>
+            <p class="key-point" data-i18n-html="L3.code3.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L3.demo3.hint"></p>
+            <div class="demo-mount" data-demo="d3-navbar"></div>
+          </div>
+        </div>
+      </article>
+  </section>
+</main>
+
+<footer class="lesson-footer">
+  <p data-i18n="footer.case"></p>
+  <p data-i18n="footer.note"></p>
+</footer>
+
+<nav class="chapter-pager">
+  <a class="pager-prev" href="../lesson-02/index.html"><span class="pager-dir" data-i18n="common.prev"></span><span class="pager-title" data-i18n="nav.ch2"></span></a>
+  <a class="pager-portal" href="../index.html" data-i18n="common.portal"></a>
+  <a class="pager-next" href="../lesson-04/index.html"><span class="pager-dir" data-i18n="common.next"></span><span class="pager-title" data-i18n="nav.ch4"></span></a>
+</nav>
+
+<script src="../i18n.js"></script>
+<script src="../lesson-content.js"></script>
+<script src="../site.js"></script>
+<script src="../demos.js"></script>
+</body>
+</html>

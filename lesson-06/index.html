@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>第 6 章 · 页面布局 / Chapter 6 · Page Layout</title>
+<script>
+/* 标题跟随语言：
+   ① 首屏从 URL 的 ?lang= 读取（localStorage 在 file:// 下不跨页面持久化）
+   ② 之后由 langchange 事件驱动，按 L 键或点语言开关也会同步更新 */
+(function () {
+  var CH = 6;
+  function setTitle(lang) {
+    document.title = (lang === 'en-US' || lang === 'en')
+      ? 'Chapter ' + CH + ' · Page Layout'
+      : '第 ' + CH + ' 章 · 页面布局';
+  }
+  try {
+    var m = /[?&]lang=([^&#]+)/.exec(location.search);
+    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    if (v) setTitle(v.indexOf('en') === 0 ? 'en-US' : 'zh-CN');
+  } catch (e) {}
+  document.addEventListener('langchange', function (ev) {
+    setTitle(ev.detail && ev.detail.lang);
+  });
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f7f4ed'/%3E%3Ctext x='32' y='45' font-family='Songti SC,Georgia,serif' font-size='44' font-weight='600' fill='%23bc4a24' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<nav class="course-topbar" data-current="6">
+  <a class="brand" href="../index.html">
+    <span class="back">←</span><span class="logo-dot">L</span>
+    <span data-i18n="nav.home"></span>
+  </a>
+  <ul class="tabs">
+    <li><a href="../lesson-01/index.html" data-ch="1" data-i18n="nav.ch1"></a></li>
+    <li><a href="../lesson-02/index.html" data-ch="2" data-i18n="nav.ch2"></a></li>
+    <li><a href="../lesson-03/index.html" data-ch="3" data-i18n="nav.ch3"></a></li>
+    <li><a href="../lesson-04/index.html" data-ch="4" data-i18n="nav.ch4"></a></li>
+    <li><a href="../lesson-05/index.html" data-ch="5" data-i18n="nav.ch5"></a></li>
+    <li><a href="../lesson-06/index.html" data-ch="6" data-i18n="nav.ch6"></a></li>
+    <li><a href="../lesson-07/index.html" data-ch="7" data-i18n="nav.ch7"></a></li>
+  </ul>
+  <div class="lang-switch">
+    <button data-set-lang="zh-CN" class="active">中文</button>
+    <button data-set-lang="en-US">EN</button>
+  </div>
+</nav>
+
+<!-- ============ 章节头 ============ -->
+<header class="lesson-header" data-folio="Chapter 6 / 07 — Plate 01–03">
+  <div>
+    <h1><span class="chip">CH 06</span><span data-i18n="L6.title"></span></h1>
+    <p class="subtitle" data-i18n="L6.subtitle"></p>
+  </div>
+  <div class="header-tip">
+    <span class="kbd">Tab</span> <span data-i18n="tip.tab"></span> ·
+    <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span>
+    <span data-i18n="tip.tabs"></span> ·
+    <span class="kbd">L</span> <span data-i18n="tip.lang"></span>
+  </div>
+</header>
+
+<main class="lesson-main">
+  <!-- 左侧章节目录 -->
+  <aside class="chapter-nav">
+    <h3 data-i18n="common.chapter"></h3>
+    <ul>
+        <li><a href="#ch-6-1" data-chapter="ch-6-1" class="active" data-i18n="L6.sec1.h"></a></li>
+        <li><a href="#ch-6-2" data-chapter="ch-6-2" data-i18n="L6.sec2.h"></a></li>
+        <li><a href="#ch-6-3" data-chapter="ch-6-3" data-i18n="L6.sec3.h"></a></li>
+    </ul>
+    <div class="nav-tip">
+      <a href="../index.html">↗ <span data-i18n="common.portal"></span></a><br>
+      <a href="../index.html#live">↗ <span data-i18n="common.demo"></span></a>
+    </div>
+  </aside>
+
+  <!-- 章节内容 -->
+  <section class="chapter-content">
+
+      <!-- ============= 6.1 ============= -->
+      <article class="chapter active" id="ch-6-1"
+               data-plate="Plate 6.1">
+        <h2><span class="num" data-i18n="L6.sec1.num"></span><span class="ttl" data-i18n="L6.sec1.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L6.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L6.intro.p"></p>
+              <p data-i18n-html="L6.sec1.p1"></p>
+              <p data-i18n-html="L6.sec1.p2"></p>
+              <p class="note" data-i18n-html="L6.sec1.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L6.code1.t"></h3>
+            <p class="code-purpose" data-i18n-html="L6.code1.p"></p>
+            <pre><code class="lang-css">/* 流式字号：把设计语言直接翻译成一个表达式
+   “360px 宽时 20px，1100px 宽时 44px，两端截断” */
+h1 {
+  font-size: clamp(20px, 0.9rem + 3.2vw, 44px);
+}
+
+/* 展开成等价的可读形式：
+   clamp(min, preferred, max)
+   preferred = min + (max − min) × (100vw − vwMin) / (vwMax − vwMin) */
+
+/* 对比：媒体查询产生阶梯函数，断点之间是死区 */
+h1 { font-size: 20px; }
+@media (min-width: 1100px) { h1 { font-size: 44px; } }
+/* 问题：760px 时仍然是 20px —— 半大不小的尴尬尺寸 */
+
+/* ⚠️ 千万不要只写 vw：小屏上会小到无法阅读 */
+h1 { font-size: 4vw; }        /* ❌ 320px 时只有 12.8px */
+
+/* clamp 不影响浏览器缩放；但正文最小不要低于 15–16px */</code></pre>
+            <p class="key-point" data-i18n-html="L6.code1.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L6.demo1.hint"></p>
+            <div class="demo-mount" data-demo="d6-breakpoint"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 6.2 ============= -->
+      <article class="chapter" id="ch-6-2"
+               data-plate="Plate 6.2">
+        <h2><span class="num" data-i18n="L6.sec2.num"></span><span class="ttl" data-i18n="L6.sec2.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L6.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L6.sec2.p1"></p>
+              <h4 data-i18n="L6.sec2.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L6.sec2.th1"></th><th data-i18n="L6.sec2.th2"></th><th data-i18n="L6.sec2.th3"></th></tr></thead><tbody><tr><td data-i18n-html="L6.sec2.r1a"></td><td data-i18n-html="L6.sec2.r1b"></td><td data-i18n-html="L6.sec2.r1c"></td></tr><tr><td data-i18n-html="L6.sec2.r2a"></td><td data-i18n-html="L6.sec2.r2b"></td><td data-i18n-html="L6.sec2.r2c"></td></tr><tr><td data-i18n-html="L6.sec2.r3a"></td><td data-i18n-html="L6.sec2.r3b"></td><td data-i18n-html="L6.sec2.r3c"></td></tr><tr><td data-i18n-html="L6.sec2.r4a"></td><td data-i18n-html="L6.sec2.r4b"></td><td data-i18n-html="L6.sec2.r4c"></td></tr></tbody></table>
+              <p data-i18n-html="L6.sec2.p2"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L6.code2.t"></h3>
+            <p class="code-purpose" data-i18n-html="L6.code2.p"></p>
+            <pre><code class="lang-css">/* 容器查询：让组件看“自己的宽度”，而不是视口宽度 */
+
+/* ① 在父元素上声明查询容器 */
+.sidebar, .main-column {
+  container-type: inline-size;   /* 行内方向成为查询容器 */
+  container-name: card-host;     /* 可选：命名，便于精确查询 */
+}
+
+/* ② 在子元素上按容器宽度改变内部布局 */
+.card { display: flex; flex-direction: column; gap: 8px; }
+
+@container card-host (min-width: 420px) {
+  .card { flex-direction: row; align-items: center; }
+  .card__thumb { width: 72px; height: 72px; }
+  .card h4 { font-size: 1.05rem; }
+}
+
+/* 效果：同一个卡片组件，在宽主区里横排、在窄侧栏里竖排，
+   两种形态可以在同一屏内同时存在 */
+
+/* 代价：container-type: inline-size 会让该元素在行内方向上的
+   尺寸不再由内容决定（width:auto 变为占满可用宽度） */
+
+/* 三者不互斥：整页骨架用媒体查询 / auto-fit，组件内部用容器查询 */</code></pre>
+            <p class="key-point" data-i18n-html="L6.code2.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L6.demo2.hint"></p>
+            <div class="demo-mount" data-demo="d6-clamp"></div>
+          </div>
+        </div>
+      </article>
+      <!-- ============= 6.3 ============= -->
+      <article class="chapter" id="ch-6-3"
+               data-plate="Plate 6.3">
+        <h2><span class="num" data-i18n="L6.sec3.num"></span><span class="ttl" data-i18n="L6.sec3.h"></span></h2>
+        <p class="chapter-subtitle" data-i18n="L6.subtitle"></p>
+
+        <div class="tabs" data-tabs>
+          <button class="tab-btn active" data-tab="explain" data-i18n="tab.explain"></button>
+          <button class="tab-btn" data-tab="code" data-i18n="tab.code"></button>
+          <button class="tab-btn" data-tab="demo" data-i18n="tab.demo"></button>
+        </div>
+
+        <div class="tab-panels">
+          <!-- 讲解 -->
+          <div class="tab-panel active" data-panel="explain">
+              <p data-i18n-html="L6.sec3.p1"></p>
+              <h4 data-i18n="L6.sec3.table"></h4><table class="theory-table"><thead><tr><th data-i18n="L6.sec3.th1"></th><th data-i18n="L6.sec3.th2"></th><th data-i18n="L6.sec3.th3"></th></tr></thead><tbody><tr><td data-i18n-html="L6.sec3.r1a"></td><td data-i18n-html="L6.sec3.r1b"></td><td data-i18n-html="L6.sec3.r1c"></td></tr><tr><td data-i18n-html="L6.sec3.r2a"></td><td data-i18n-html="L6.sec3.r2b"></td><td data-i18n-html="L6.sec3.r2c"></td></tr><tr><td data-i18n-html="L6.sec3.r3a"></td><td data-i18n-html="L6.sec3.r3b"></td><td data-i18n-html="L6.sec3.r3c"></td></tr></tbody></table>
+              <p class="note" data-i18n-html="L6.sec3.note"></p>
+          </div>
+
+          <!-- 关键代码 -->
+          <div class="tab-panel" data-panel="code">
+            <h3 data-i18n="L6.code3.t"></h3>
+            <p class="code-purpose" data-i18n-html="L6.code3.p"></p>
+            <pre><code class="lang-css">/* 移动端视口单位：vh 的四个兄弟 */
+.hero {
+  height: 100vh;    /* ❌ 最大视口：地址栏显示时底部被遮住 */
+  height: 100svh;   /* 小视口：地址栏展开时的可视高度 */
+  height: 100lvh;   /* 大视口：地址栏收起时的可视高度 */
+  height: 100dvh;   /* ✅ 动态视口：随浏览器 UI 实时变化，首选 */
+}
+
+/* 安全区：避开 iPhone 底部横条与刘海 */
+.bottom-bar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.fab {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+/* 触控目标最小 44 × 44px —— 低于这个尺寸误触率显著上升 */
+.tap-target { min-height: 44px; min-width: 44px; }</code></pre>
+            <p class="key-point" data-i18n-html="L6.code3.k"></p>
+          </div>
+
+          <!-- 演示 -->
+          <div class="tab-panel" data-panel="demo">
+            <p class="demo-hint" data-i18n="L6.demo3.hint"></p>
+            <div class="demo-mount" data-demo="d6-container"></div>
+          </div>
+        </div>
+      </article>
+  </section>
+</main>
+
+<footer class="lesson-footer">
+  <p data-i18n="footer.case"></p>
+  <p data-i18n="footer.note"></p>
+</footer>
+
+<nav class="chapter-pager">
+  <a class="pager-prev" href="../lesson-05/index.html"><span class="pager-dir" data-i18n="common.prev"></span><span class="pager-title" data-i18n="nav.ch5"></span></a>
+  <a class="pager-portal" href="../index.html" data-i18n="common.portal"></a>
+  <a class="pager-next" href="../lesson-07/index.html"><span class="pager-dir" data-i18n="common.next"></span><span class="pager-title" data-i18n="nav.ch7"></span></a>
+</nav>
+
+<script src="../i18n.js"></script>
+<script src="../lesson-content.js"></script>
+<script src="../site.js"></script>
+<script src="../demos.js"></script>
+</body>
+</html>
