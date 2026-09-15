@@ -1,0 +1,50 @@
+# ============================================================
+# 一键部署：docker compose up -d
+# 2 核 2G 的服务器跑这个绰绰有余（实测常驻内存约 10 MB）
+# ============================================================
+
+services:
+  web:
+    build: .
+    image: layout-course:latest
+    container_name: layout-course
+
+    # 只监听本机回环：外部通过宿主机 nginx/Caddy 反代进来。
+    # 若想让容器直接对外，改成 "80:80" 即可。
+    ports:
+      - "127.0.0.1:8080:80"
+
+    environment:
+      - NGINX_PORT=80
+
+    restart: unless-stopped
+
+    # ---- 加固（静态站用得上，且零成本）----
+    read_only: true                 # 根文件系统只读
+    tmpfs:
+      - /var/cache/nginx            # nginx 需要写缓存与 pid
+      - /var/run
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN                         # 入口脚本需要调整目录属主
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+      - NET_BIND_SERVICE
+
+    # ---- 资源上限：防止异常流量拖垮小机器 ----
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 128M
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -22,8 +22,13 @@ python3 -m http.server 8000
 所有演示都是真实 DOM + 真实 CSS；iframe 使用 `srcdoc` 写入，
 因此在 `file://` 与 `http(s)://` 下均可正常测量与交互。
 
-> 部署到服务器（Nginx 配置、体积与负载估算、HTTPS、备案）见 **[DEPLOY.md](DEPLOY.md)**。
-> 结论先行：纯静态站，**2 核 2G 远远够用**，实际上 1 核 512M 都够。
+> 部署到服务器见三份文档：
+> **[SERVER-SETUP.md](SERVER-SETUP.md)** —— ⭐ 针对腾讯云轻量（Ubuntu 24.04）的逐步实操（从 SSH 登录到 HTTPS 上线）
+> **[DOCKER.md](DOCKER.md)** —— Docker 打包原理、compose 配置、加固与排障
+> **[DEPLOY.md](DEPLOY.md)** —— 传统方式（不用 Docker，宿主机 Nginx 直接指向目录）
+>
+> 结论先行：纯静态站，**2 核 2G 远远够用**，实际上 1 核 512M 都够；
+> 打好的镜像约 50 MB，容器常驻内存约 10 MB。
 
 ### 两个 `file://` 相关的实现细节
 

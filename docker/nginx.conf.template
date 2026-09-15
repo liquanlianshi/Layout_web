@@ -1,0 +1,83 @@
+# ============================================================
+# 容器内的 nginx 站点配置
+# 官方 nginx 镜像的 entrypoint 会在启动时用 envsubst 渲染本文件，
+# 只有 ${VAR} 形式的变量会被替换，nginx 自己的 $uri / $1 不受影响。
+# ============================================================
+
+server {
+    listen       ${NGINX_PORT};
+    listen  [::]:${NGINX_PORT};
+    server_name  _;
+
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    charset utf-8;
+
+    # ---------- 日志 ----------
+    # 交给 docker logs 收集，不写文件，容器可只读运行
+    access_log /dev/stdout;
+    error_log  /dev/stderr warn;
+
+    # ---------- gzip ----------
+    # 对本站效果显著：demos.js 150KB → 44KB，整页 331KB → 105KB
+    gzip              on;
+    gzip_vary         on;
+    gzip_comp_level   6;
+    gzip_min_length   1024;
+    gzip_proxied      any;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        application/javascript
+        application/json
+        application/xml
+        image/svg+xml;
+
+    # ---------- 缓存策略 ----------
+    # 带内容指纹无关：JS/CSS 更新靠「改完重新构建镜像」，
+    # 所以给静态资源长缓存，HTML 每次校验（命中则 304，几乎不耗流量）
+    location ~* \.(?:css|js|svg|png|jpe?g|webp|ico|woff2?)$ {
+        expires 7d;
+        # 安全头必须在这里重复：location 内的 add_header 会覆盖 server 层的继承
+        add_header X-Content-Type-Options  "nosniff"                         always;
+        add_header Referrer-Policy         "strict-origin-when-cross-origin"  always;
+        access_log off;
+    }
+
+    location ~* \.html$ {
+        add_header Cache-Control              "no-cache"                        always;
+        add_header X-Content-Type-Options  "nosniff"                         always;
+        add_header Referrer-Policy         "strict-origin-when-cross-origin"  always;
+    }
+
+    # ---------- 安全响应头 ----------
+    # 注意：不要加 X-Frame-Options / frame-ancestors，
+    # 站内演示用 iframe[srcdoc] 承载，会被误伤。
+    add_header X-Content-Type-Options  "nosniff"                      always;
+    add_header Referrer-Policy         "strict-origin-when-cross-origin" always;
+
+    # ---------- 健康检查 ----------
+    location = /healthz {
+        access_log off;
+        default_type "text/plain; charset=utf-8";
+        return 200 "ok\n";
+    }
+
+    # ---------- 路由 ----------
+    # 站内链接都是显式 index.html，这里只是兜底
+    location / {
+        try_files $uri $uri/ $uri/index.html =404;
+    }
+
+    # 目录列表一律关闭
+    autoindex off;
+
+    # 隐藏文件（.DS_Store、.git 等）不对外
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+}
