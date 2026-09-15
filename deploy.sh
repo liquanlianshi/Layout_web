@@ -52,7 +52,7 @@ if [ "$(uname -s)" != "Linux" ]; then
     ② 登录后执行 sudo -i 取得 root 权限
     ③ 进项目目录执行 bash deploy.sh
 
-  逐步实操见 SERVER-SETUP.md
+  逐步实操见 README.md
 
 EOS
     exit 1
@@ -146,6 +146,34 @@ if [ -n "$MISSING" ]; then
   die "缺少上述文件。请确认已把 Dockerfile、docker/ 目录一起上传"
 fi
 ok "全部 17 个必要文件就位"
+
+# 权限检查：容器里的 nginx worker 以 nginx 用户（UID 101）运行，
+# 不是 root。文件若不可被其他用户读取（如 600），访问会 403 Forbidden。
+# git 只记录 100644/100755，所以 clone 后通常没问题；
+# 但若用 rsync/scp 传输或 umask 异常就会出现，这里提前拦住。
+# 检查「其他用户」读位（看 mode 最后一位）
+NOREAD=""
+for f in $REQUIRED; do
+  m=$(stat -c '%a' "$f" 2>/dev/null || stat -f '%OLp' "$f" 2>/dev/null || echo "")
+  [ -n "$m" ] || continue
+  last=$(printf '%s' "$m" | tail -c 2)
+  case "$last" in
+    *4|*5|*6|*7) ;;
+    *) NOREAD="$NOREAD $f" ;;
+  esac
+done
+
+if [ -n "$NOREAD" ]; then
+  warn "以下文件的『其他用户』无读权限，容器内 nginx worker 会读不到 → 403："
+  printf '%s\n' "$NOREAD" | tr ' ' '\n' | sed '/^$/d' | sed 's/^/      /'
+  if [ "$MODE" = "check" ]; then
+    printf '      执行修复： chmod -R a+rX .\n'
+  else
+    chmod -R a+rX . 2>/dev/null && ok "已自动修正（chmod -R a+rX .）"
+  fi
+else
+  ok "文件权限正常（其他用户可读，容器内 nginx worker 能读到）"
+fi
 
 if [ -z "${MISSING}" ] && [ "$MODE" != "check" ] && [ -d .git ]; then
   ok "检测到 git 仓库，可用 git pull 更新代码"
@@ -244,7 +272,7 @@ cat <<EOF
      浏览器打开 http://${PUBIP}/
 
   ③ 想绑域名 + HTTPS
-     域名解析添加 A 记录 → ${PUBIP}，然后按 DOCKER.md 第五节配置反代与证书。
+     域名解析添加 A 记录 → ${PUBIP}，然后按 README.md 第六节配置反代与证书。
 
   常用命令
      docker compose logs -f --tail=100     # 看日志
@@ -252,6 +280,6 @@ cat <<EOF
      docker stats layout-course --no-stream # 资源占用
      bash deploy.sh --update               # 更新代码后重建
 
-  完整实操手册见 SERVER-SETUP.md
+  完整实操手册见 README.md
 
 EOF

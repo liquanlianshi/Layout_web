@@ -1,13 +1,15 @@
-# 构建上下文排除清单
-# 目标：把 23MB 的 v2.zip、10MB 的验证截图、.git 历史挡在构建上下文之外，
-# 否则 docker build 每次都要把这些打包传给 daemon。
-# 加了本文件后，构建上下文只有约 431 KB / 15 个文件。
-
-# ---- 开发与验证产物（不进镜像）----
-tools/
-*.zip
-*.tar.gz
-*.pdf
+# ============================================================
+# .dockerignore — 不进 Docker 镜像的文件
+#
+# ⚠️ 注意区分：
+#   .dockerignore 管「不进 Docker 镜像」（本文件）
+#   .gitignore    管「不进 Git 仓库」
+#
+# ⚠️ 千万不要把 docker/ 加进来！
+#   Dockerfile 里有一行 COPY docker/nginx.conf.template，
+#   排除它会让 docker build 直接失败：
+#     file not found in build context
+# ============================================================
 
 # ---- 版本控制与系统文件 ----
 .git/
@@ -15,20 +17,25 @@ tools/
 .DS_Store
 **/.DS_Store
 
-# ---- 文档（镜像里不需要）----
+# ---- 文档（镜像里不需要，README 只给人看）----
 README.md
-DEPLOY.md
-DOCKER.md
 
 # ---- Docker 编排文件本身（构建时用不到）----
 Dockerfile
 docker-compose.yml
 .dockerignore
 
-# 注意：不要排除 docker/ 目录！
-# Dockerfile 里有一行 COPY docker/nginx.conf.template，
-# 排除它会导致构建失败：file not found in build context。
+# ---- 打包产物 ----
+*.zip
+*.tar
+*.tar.gz
+*.pdf
 
 # ---- 其它 ----
 *.log
 node_modules/
+
+# ------------------------------------------------------------
+# 构建上下文最终只有 15 个文件 / 434 KB：
+#   网站本体 14 个 + docker/nginx.conf.template
+# ------------------------------------------------------------

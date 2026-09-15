@@ -1,221 +1,311 @@
-# 页面布局 · 交互式教学网站 / Page Layout · An Interactive Course
+# 页面布局 · 交互式教学网站
 
-一个**中英双语**的页面布局教学网站。结构模仿给定的样例（课程门户 + 分章集成教学页面，
-每个小节都是「讲解 / 关键代码 / 演示」三 tab），内容按**同一个贯穿案例**逐步展开。
-
-Site structure mirrors the provided sample: a course portal plus per-chapter integrated
-teaching pages, each section offering **Concept / Key Code / Live Demo** tabs, with all
-content built around **one running case**.
+中英双语页面布局课程。**纯静态站**：无后端、无数据库、无构建步骤。
+七个章节，每章一套「讲解 / 关键代码 / 演示」三 tab，共 21 个可交互演示。
 
 ---
 
-## 直接打开 / How to open
+## 部署到服务器（Docker）
 
-零依赖、纯静态，双击即可运行：
+**目标服务器**：腾讯云轻量 · 首尔 · Ubuntu 24.04
+`43.133.237.170` · 2 核 2G · 已放行 80/443
+
+**镜像约 50 MB，容器常驻内存约 10 MB。**
+
+---
+
+### 一、登录服务器
 
 ```bash
-open index.html          # macOS
-# 或起一个本地服务器（可选）
-python3 -m http.server 8000
+ssh -i ~/.ssh/layout-course.pem ubuntu@43.133.237.170
 ```
 
-所有演示都是真实 DOM + 真实 CSS；iframe 使用 `srcdoc` 写入，
-因此在 `file://` 与 `http(s)://` 下均可正常测量与交互。
+> ⚠️ **用户名是 `ubuntu`，不是 `root`**。
+> Ubuntu 云端镜像默认禁止 root 直连（`PermitRootLogin prohibit-password`），
+> 且只允许密钥登录。用 `root` 会报 `Permission denied (publickey)`。
 
-> 部署到服务器见三份文档：
-> **[SERVER-SETUP.md](SERVER-SETUP.md)** —— ⭐ 针对腾讯云轻量（Ubuntu 24.04）的逐步实操（从 SSH 登录到 HTTPS 上线）
-> **[DOCKER.md](DOCKER.md)** —— Docker 打包原理、compose 配置、加固与排障
-> **[DEPLOY.md](DEPLOY.md)** —— 传统方式（不用 Docker，宿主机 Nginx 直接指向目录）
->
-> 结论先行：纯静态站，**2 核 2G 远远够用**，实际上 1 核 512M 都够；
-> 打好的镜像约 50 MB，容器常驻内存约 10 MB。
+还没复制私钥的话，先在 Mac 上执行：
 
-### 两个 `file://` 相关的实现细节
-
-**① 链接必须指向具体的 `index.html`。**
-在 `file://` 协议下浏览器**不会**把目录解析成 `index.html`，而是列出目录内容。
-所以站内所有链接都写成 `../lesson-03/index.html` 而不是 `../lesson-03/`——
-后者在本地直接打开时会跳到目录列表页。
-
-**② 语言偏好用 URL 参数传递，不依赖 localStorage。**
-实测部分浏览器在 `file://` 下不会跨页面持久化 `localStorage`，
-因此语言选择会丢失。现在 `i18n.js` 在每次切换语言时，
-把 `?lang=zh|en` 同步到文档内所有站内链接上，下一页通过 URL 读取即可；
-`localStorage` 仍然写入（`http(s)` 下有效），但只作为第二优先级的回退。
-浏览器标题（`<title>`）也由 `langchange` 事件驱动同步更新。
+```bash
+mkdir -p ~/.ssh
+cp "/Users/lianshi/密钥/my_first_.pem" ~/.ssh/layout-course.pem
+chmod 600 ~/.ssh/layout-course.pem
+```
 
 ---
 
-## 贯穿案例 / The running case
+### 二、确认 Docker
 
-设计师 **Lin 的个人作品集主页**。它在第 1 章是"能跑但难看"的原始状态，
-随后七章里被一次次测量、重构、打磨，最终在第 7 章达到可交付水准。
+```bash
+docker --version && docker compose version
+```
 
-| 章 | 主题 | 案例里解决的问题 |
+没装的话：
+
+```bash
+sudo apt-get update
+curl -fsSL https://get.docker.com | sudo sh
+sudo apt-get install -y docker-compose-plugin
+sudo systemctl enable --now docker
+```
+
+---
+
+### 三、拉取代码并部署
+
+```bash
+sudo -i                                    # 升权到 root，后面命令不用加 sudo
+
+cd /opt
+git clone https://github.com/liquanlianshi/Layout_web.git layout-course
+cd layout-course
+
+bash deploy.sh --check                     # 先体检，不改动任何东西
+bash deploy.sh --ip                        # 正式部署（--ip 让容器对外监听 80）
+```
+
+> **`--ip` 必须加。** 不加的话默认只监听 `127.0.0.1:8080`，公网访问不到。
+
+**期望结尾**：
+
+```
+==> 6/6 本机自测
+  ✓ 首页 → 200
+  ✓ 健康检查 → 200
+  ✓ 第 3 章 → 200
+  ✓ 不存在的页面 → 404
+  ✓ gzip 生效：demos.js 44801 字节（未压缩 153722）
+```
+
+---
+
+### 四、验证
+
+```bash
+# 服务器上：三层依次确认
+docker compose ps                          # ① 容器 Up (healthy)
+docker port layout-course                  # ② 端口映射 0.0.0.0:80->80
+curl -I http://127.0.0.1/healthz           # ③ 本机能响应 200
+
+# Mac 上：确认公网可达
+curl -I http://43.133.237.170/healthz      # 期望 HTTP/1.1 200 OK
+```
+
+浏览器打开 **http://43.133.237.170/** 验收：
+
+- [ ] 首页正常，导航、统计、案例演化演示都在
+- [ ] 进任一章 →「演示」tab → **拖动滑块，读数实时变化**
+- [ ] 右上角切 **EN** → 页面变英文 → 跳到下一章 **仍是英文**
+- [ ] `Cmd + -` 缩到手机宽度 → **没有横向滚动条**
+- [ ] `F12` 控制台 → **无红色报错、无 404**
+
+---
+
+### 五、更新网站内容
+
+```bash
+# Mac 上
+cd /Users/lianshi/作业/可视化导论
+git add -A && git commit -m "update" && git push
+
+# 服务器上
+cd /opt/layout-course
+git pull
+bash deploy.sh --update
+```
+
+> 静态资源有 7 天强缓存。自己要看新版本需 `Cmd + Shift + R` 强制刷新；
+> 面向学生发布建议把 `docker/nginx.conf.template` 里的 `expires 7d` 改成 `expires 1h`。
+
+---
+
+### 六、配 HTTPS（需要域名）
+
+证书不能签发给 IP，所以先解析域名：
+
+| 类型 | 主机记录 | 记录值 |
 |---|---|---|
-| 1 | 布局是空间的语言 | 学会**说出哪里不对劲**：格式塔分组、对齐、视觉层级、栅格 |
-| 2 | 盒模型与文档流 | 侧栏总是差 20px：`box-sizing`、外边距塌陷、BFC、显示类型 |
-| 3 | Flexbox 一维布局 | 导航条两端对齐、卡片底部对齐、`flex: 1` vs `flex: auto` |
-| 4 | Grid 二维布局 | 整页骨架、`fr` 的分配规则、`auto-fit` 无媒体查询响应式 |
-| 5 | 定位、层叠与溢出 | 吸顶导航、卡片角标、模态框层叠策略 |
-| 6 | 响应式与流式思维 | 断点、`clamp()` 流式字号、容器查询、移动端 `dvh` 与安全区 |
-| 7 | 综合实战 | 十个翻车点、交付自检清单、设计令牌驱动的密度切换 |
+| A | `layout` | `43.133.237.170` |
 
-每章 3 个小节 × 3 个 tab = **21 组讲解 / 关键代码 / 演示**。
-
----
-
-## 视觉 / Art direction
-
-整套视觉参照**一本印刷考究的展览图录**，而不是常见的深色仪表盘：
-纸面、墨、朱砂印泥、铜绿、赭石；全部低饱和，可长时间阅读。
-
-| 角色 | 色值 | 对比度（纸面） | 用途 |
-|---|---|---|---|
-| 纸面 | `#f7f4ed` | — | 页面底色，叠一层极细 SVG 纸纹 |
-| 卡片纸 | `#fffdf8` | — | 章节“图版” |
-| 暖墨 | `#1b1611` | 16.4 : 1 | 正文与标题（不是纯黑） |
-| 次级墨 | `#574d42` | 7.5 : 1 | 段落、列表 |
-| 弱化墨 | `#786d5f` | 4.6 : 1 | 注释、目录、标签 |
-| **朱砂** | `#bc4a24` | 4.6 : 1 | 主强调：激活态、按钮、图版标记 |
-| **赭石** | `#82661f` | 4.9 : 1 | 辅强调：小标题、读数边线 |
-| **铜绿** | `#457368` | 4.9 : 1 | 冷辅色：代码回显、说明块 |
-| 代码图版 | `#17130f` | 12.5 : 1 | 代码块（深墨底 + 暖色语法） |
-
-全部前景色均达到 **WCAG AA（≥ 4.5:1）**。字体分工：**衬线体**（Songti SC / Georgia）
-负责标题与引言，**无衬线体**负责正文，**等宽体**负责所有读数与令牌。
-
-排版的“艺术感”来自一整套**编辑设计（editorial design）手法**，而不是装饰贴图：
-
-**书眉与页码**
-- 顶栏做成书眉：品牌左侧是等宽小字的 `L ·`，每个章节项**前置章序号**（`01`…`07`）
-- 章节页头右上角标出**版次**：`CHAPTER 3 / 07 — PLATE 01–03`
-- 每张章节卡片右上角标出**版号**：`PLATE 3.1`
-- 页脚做成**版权页**：等宽小字 + 顶栏 1.5px 实线
-
-**版面装置**
-- **首字下沉**：每张图版的首段首字放大 3 倍并染朱砂，像图录的引言
-- **章节编号悬挂**：编号移到左边距之外（`position:absolute; left:0`），正文左边缘因此保持笔直
-- **延伸细线**：图版标题与小节标题后面各拖一条渐隐横线，把文字与右侧页面连起来
-- **小节自动编号**：用 CSS `counter` 生成 `01 / 02 / 03`，无需手写
-- **图号**：演示面板自动编号为 `FIGURE 1 — …`，每章重新计数
-
-**取舍**
-- **目录不做卡片**，做成图录式的页码索引，只有一条竖线与悬停位移
-- **Tab 做成页签**：靠 `border-bottom` 滑动，而不是胶囊按钮
-- **提示块去掉色块底**，只用左侧 2px 细线分色（金 / 朱砂 / 铜绿 / 赭石）
-- **表格只用横线**（顶底粗、中间细），像印刷表格；窄屏自动横向滚动
-- **课程地图**做成细线网格，每张卡片带一个大号汉字序号做底纹
-- **统计数字**排成一条带上下横线的“数据带”
-- **门户分栏**加了竖向版式标尺与 `SECTION 01 — THE CASE` 的页边记号
-
-**背景：把“版式栅格”画到页面上**
-
-课程教的是布局，所以背景本身就是一次栅格演示，而不是纯装饰：
-
-- **朱砂栏线**：5 条粗栏线（20% 间距）+ 20 条细分栏线（5% 间距）
-- **分栏基线**：水平方向每 25% 一条
-- **套准十字与裁切标记**：四角十字 + 四边中点短线，取自印刷制版记号
-- **色域**：三块径向渐变的错落色场（朱砂 / 铜绿 / 赭石），边界柔和
-- **页边色条**：左侧一条书口刷色，每章在三种色调间轮转（`data-tone`）
-- **竖排章节字**：左侧页边竖排「第 N 章 · 页面布局」，像传统书的书耳
-- **页边小字**：右侧竖排 `SEVEN CHAPTERS · PAGE LAYOUT`
-- **大号罗马数字水印**：门户页右下角 `VII`，7% 透明度
-
-这些层全部是 `position: fixed` + `pointer-events: none`，不参与文档流、不影响阅读，
-并在 ≤900px（栅格与标记）与 ≤1180px（色条与竖排字）自动隐藏，打印时全部移除。
-
-**排印细节**
-- `text-wrap: pretty` 避免孤字成行，`text-wrap: balance` 让标题断行更匀
-- `hanging-punctuation: allow-end` 让行末标点悬挂，`text-spacing-trim` 挤压中文标点
-- 演示读数、版号、令牌一律等宽体，正文一律无衬线，标题与引言一律衬线
-
-演示内部的示意色板也改为颜料色系（赭红 / 靛青 / 铜绿 / 赭金 / 陶土 / 橄榄）。
-这些色值全部走 `--dm-*` 语义令牌，由 `demos.js` 从宿主页面读取后注入 iframe，
-因此演示配色能跟随全站主题一起变化（`styles.css` 里保留了 `[data-theme="ink"]` 深色墨版）。
-
----
-
-## 目录结构 / Files
-
-```
-index.html              课程门户（含"案例演化"时间轴演示）
-lesson-01…07/index.html 七章教学页面（由 tools/build_lessons.py 生成）
-styles.css              全站设计系统（含演示控件与读数面板样式）
-i18n.js                 双语引擎 + 轻量语法高亮
-site.js                 Tab 切换、滚动高亮、键盘快捷键、阅读进度
-demos.js                21 个可交互演示的实现（真实测量，零依赖）
-lesson-content.js       七章的双语词库（545 条词条）
-extra-content.js        门户页演示的双语词条
-tools/build_lessons.py  从词库生成七章页面
-tools/check.mjs         双语一致性 + 引用完整性静态检查
-tools/probe.mjs         无头 Chrome 验证：JS 错误、演示读数、截图
-tools/interact.mjs      交互回归：语言切换 + 逐控件触发
-tools/shots/            验证截图
-```
-
----
-
-## 演示为什么是"真"的
-
-每个演示都遵循同一条原则：**用测量代替感觉**。
-
-- 演示对象是真实的 DOM（部分放在 `iframe[srcdoc]` 里，隔离样式）
-- 拖动控件后，直接读取 `getBoundingClientRect()` / `getComputedStyle()`
-- 读数面板显示**理论值 vs 浏览器实测值**，并标出 ✓ / ✗
-- 读数在页面上生成，切到英文时由 `demos.js` 的本地化层同步翻译
-
-例如第 2 章的外边距塌陷演示会同时给出"数学期望 `max(20,30)=30px`"与"浏览器实测 30px ✓"；
-第 4 章的 `fr` 演示会打印每条轨道的实际像素宽度。
-
----
-
-## 中英双语的一致性保证
-
-1. **同一 key 渲染两语**：正文用 `data-i18n` / `data-i18n-html` 指向词库中的成对词条，
-   两个语言版本不可能出现内容漂移。
-2. **成对校验**：`tools/check.mjs` 强制每一条词条都必须同时具备 `zh` 与 `en`。
-3. **引用校验**：页面引用的每个 key 都必须存在，每个 `data-demo` 都必须有实现。
-4. **运行时校验**：`tools/interact.mjs` 切换语言后检查是否出现空文本，
-   并确认 `[data-lang]` 块互斥显示、`[data-bi-zh]` 节点都有对应的英文。
-
-> 说明：关键代码块内的**注释为中文**（代码本体语言无关），
-> 对应的英文解释紧跟在代码下方的 key-point 中，两语读者获得同样的信息量。
-
----
-
-## 键盘快捷键
-
-| 键 | 作用 |
-|---|---|
-| `Tab` | 本章内三 tab 轮换 |
-| `1` `2` `3` | 直达 讲解 / 关键代码 / 演示 |
-| `←` `→` | 上一章 / 下一章 |
-| `L` | 中英切换 |
-
----
-
-## 自检 / Verify
+然后**先把容器改回只监听本机**（否则 80 端口被占用，宿主机 nginx 起不来）：
 
 ```bash
-node tools/check.mjs                      # 静态：词条成对、引用完整、结构一致
-node tools/probe.mjs $(ls -d lesson-*/index.html) index.html   # 无头浏览器：错误与读数
-node tools/interact.mjs                   # 交互：语言切换 + 逐控件触发
+cd /opt/layout-course
+sed -i 's|"80:80"|"127.0.0.1:8080:80"|' docker-compose.yml
+docker compose up -d
+```
 
-python3 tools/build_lessons.py            # 修改词库后重新生成七章页面
+装 nginx 并反代：
+
+```bash
+apt-get install -y nginx
+
+cat > /etc/nginx/sites-available/layout-course <<'EOF'
+server {
+    listen 80;
+    server_name layout.example.com;         # ← 改成你的域名
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+
+ln -sf /etc/nginx/sites-available/layout-course /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+nginx -t && systemctl reload nginx
+```
+
+> 容器内已开 gzip，宿主机 nginx **不要**再压一遍，双重压缩浪费 CPU。
+
+申请免费证书（90 天自动续期）：
+
+```bash
+apt-get install -y certbot python3-certbot-nginx
+certbot --nginx -d layout.example.com
+# 邮箱 → A 同意条款 → N 不订阅 → 选 2 把 HTTP 跳转到 HTTPS
 ```
 
 ---
 
-## 课程引用的理论
+### 七、常用运维命令
 
-- 格式塔原则（Wertheimer 1923）：接近性 / 相似性 / 共同区域 / 连续性
-- 视觉层级与对齐的阅读成本模型
-- 栅格系统（Josef Müller-Brockmann, *Grid Systems in Graphic Design*, 1961）
-- CSS 盒模型规范与外边距塌陷（CSS 2.1 §8.3.1）
-- 块级格式化上下文（BFC）
-- Flex 弹性分配算法（CSS Flexible Box Layout §9.7）
-- CSS Grid 轨道与 `fr` 分配
-- 包含块与层叠上下文（CSS Positioned Layout）
-- 内在响应式设计（Jen Simmons, *Intrinsic Web Design*, 2018）
-- 容器查询与流式排版（`clamp()`、`dvh`、`env(safe-area-inset-*)`）
+```bash
+cd /opt/layout-course                      # 需要权限时先 sudo -i
+
+docker compose logs -f --tail=100          # 实时日志
+docker compose ps                          # 容器状态（期望 Up healthy）
+docker compose restart                     # 重启
+docker stats layout-course --no-stream     # 资源占用（约 10 MB）
+docker image prune -f                      # 清理旧镜像层
+df -h /                                    # 磁盘
+```
+
+---
+
+## 部署排障
+
+### `curl http://43.133.237.170/` 连不上
+
+在服务器上按下面顺序逐层排查：
+
+```bash
+# ① 容器在跑吗
+docker compose ps
+# ② 端口怎么映射的
+docker port layout-course
+# ③ 本机能不能通
+curl -I http://127.0.0.1:80/healthz
+# ④ 有没有别的进程占用 80
+ss -tlnp | grep ':80'
+```
+
+| 现象 | 原因 | 处理 |
+|---|---|---|
+| 秒拒 `Couldn't connect` | 没有进程监听 80 | 容器没起，或没加 `--ip` |
+| 一直卡住无响应 | 云端防火墙丢包 | 控制台 → 防火墙 → 放行 HTTP(80) |
+| 本机通、公网不通 | 只监听回环 | `bash deploy.sh --ip` |
+| `permission denied` | 没升权 | `sudo -i` |
+
+### 反代后 502 Bad Gateway
+
+```bash
+curl -I http://127.0.0.1:8080/          # 宿主机能否连到容器
+```
+不通 → 容器没起（`docker compose logs`）；
+通了还 502 → nginx 配置问题（`nginx -t`、`tail -50 /var/log/nginx/error.log`）。
+
+### `nginx -t` 报 `Address already in use`
+
+80 端口被容器占了（跑过 `--ip`）。按第六节改回容器只监听本机。
+
+### 健康检查一直 unhealthy
+
+```bash
+docker inspect layout-course --format '{{json .State.Health}}'
+docker compose exec web wget -qO- http://127.0.0.1:80/healthz
+```
+`--start-period` 是 5 秒，刚启动时是 `starting`，等 30 秒再看。
+
+### 访问任何页面都返回 403 Forbidden
+
+容器内 nginx 的 worker 以 **nginx 用户（UID 101）** 运行，**不是 root**。
+如果文件成了 `600`（只有属主可读），worker 读不到就会 403。
+
+```bash
+# 在服务器上检查
+ls -l index.html                    # 应该是 -rw-r--r--
+
+# 修复（在项目目录执行）
+chmod -R a+rX .
+bash deploy.sh --update
+```
+
+`deploy.sh` 与 `Dockerfile` 都已内置处理：
+
+- `deploy.sh` 在构建前检查「其他用户」读位，发现问题会提示并自动修正
+- `Dockerfile` 在构建阶段和最终镜像里各执行一次 `chmod -R a+rX`，
+  所以**即使宿主机 umask 异常，镜像里的权限也一定是对的**
+
+> 补充：`git` 只记录 `100644`（可执行文件 `100755`），不记录 `600`，
+> 所以 `git clone` 到服务器后通常不会有这个问题。
+> 只有用 `rsync` / `scp` 直接传文件时才容易踩到。
+
+### 确认镜像内容是否干净
+
+```bash
+docker run --rm layout-course:latest ls -R /usr/share/nginx/html
+docker run --rm layout-course:latest ls -l /usr/share/nginx/html/index.html
+```
+应该正好 14 个文件、**没有 `tools/`**，且权限显示 `-rw-r--r--`。
+
+---
+
+## 文件说明
+
+### 网站本体（14 个，431 KB）—— 少了任何一个都会 404
+
+```
+index.html                首页
+styles.css                全站设计系统
+i18n.js                   双语引擎 + 语法高亮
+site.js                   Tab 切换、滚动高亮、键盘快捷键
+demos.js                  21 个可交互演示（真实 DOM 测量）
+lesson-content.js         七章双语词库
+extra-content.js          首页演示词条
+lesson-01/index.html … lesson-07/index.html
+```
+
+### 部署（6 个）
+
+| 文件 | 作用 |
+|---|---|
+| `Dockerfile` | 多阶段构建：阶段 1 校验文件，阶段 2 只拷 14 个文件进 nginx:alpine |
+| `docker/nginx.conf.template` | 容器内 nginx 配置（gzip、缓存、安全头、健康检查） |
+| `docker-compose.yml` | 只读根文件系统、能力裁剪、资源上限、日志轮转 |
+| `.dockerignore` | 把 33 MB 无关文件挡在构建上下文外（构建上下文仅 434 KB） |
+| `deploy.sh` | 一键部署：体检 → 构建 → 健康检查 → 自测（含 `--check` / `--ip` / `--update`） |
+
+### 仓库维护
+
+`.gitignore` — 排除截图、打包产物、密钥、系统文件。
+
+> **注意**：`.gitignore` 管「不进 Git 仓库」，`.dockerignore` 管「不进 Docker 镜像」，两者不要搞混。
+> `.dockerignore` **不能**排除 `docker/` 目录 —— Dockerfile 要从里面拷贝 nginx 模板。
+
+---
+
+## 本地预览（可选）
+
+无需任何依赖，直接双击 `index.html` 即可。
+
+或用本地服务器（更接近线上表现）：
+
+```bash
+python3 -m http.server 8000
+# 打开 http://localhost:8000
+```
