@@ -1,0 +1,169 @@
+# ============================================================
+# .gitignore — 确保不重要的东西不进 Git 仓库
+#
+# 关键区别（容易搞混）：
+#   .gitignore    管「不进 Git 仓库」        ← 本文件
+#   .dockerignore 管「不进 Docker 镜像」
+#
+# ⚠️ .gitignore 只对「未跟踪」的文件生效。
+#    已提交过的文件必须先用 git rm --cached 移出版本库，
+#    否则规则写了也没用。本仓库历史上提交过 tools/shots/ 与 .DS_Store，
+#    对应命令见文件末尾。
+# ============================================================
+
+
+# ------------------------------------------------------------
+# 1. 操作系统产生的垃圾文件
+# ------------------------------------------------------------
+.DS_Store
+**/.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*~
+.Trash-*
+.fseventsd/
+.Spotlight-V100/
+.AppleDouble
+.LSOverride
+._*
+
+
+# ------------------------------------------------------------
+# 2. 验证脚本产生的截图与临时产物
+#    这几 MB 的 PNG 每次跑 probe.mjs / shot.mjs 都会重新生成，
+#    没有任何理由进版本库。
+# ------------------------------------------------------------
+tools/shots/
+**/shots/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.pdf
+
+# 但保留需要长期维护的图片资源（本站目前没有，
+# 若将来加了站点配图，放在 assets/ 下不受上面规则影响）
+!assets/**/*.png
+!assets/**/*.jpg
+!assets/**/*.svg
+
+
+# ------------------------------------------------------------
+# 3. 打包与压缩产物
+# ------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.dmg
+*.iso
+
+
+# ------------------------------------------------------------
+# 4. 依赖与构建产物
+# ------------------------------------------------------------
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+*.tsbuildinfo
+
+
+# ------------------------------------------------------------
+# 5. 日志与临时文件
+# ------------------------------------------------------------
+*.log
+logs/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+
+
+# ------------------------------------------------------------
+# 6. 环境变量与密钥 —— 绝对不要进仓库
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+secrets/
+credentials*
+id_rsa*
+id_ed25519*
+.ssh/
+
+
+# ------------------------------------------------------------
+# 7. 编辑器与 IDE 配置
+#    个人偏好各不相同，不该污染仓库
+# ------------------------------------------------------------
+.vscode/
+!.vscode/settings.json.example
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+
+
+# ------------------------------------------------------------
+# 8. 部署时在服务器上产生的本地覆盖文件
+# ------------------------------------------------------------
+docker-compose.override.yml
+docker-compose.*.local.yml
+
+
+# ------------------------------------------------------------
+# ⚠️ 以下文件必须进仓库，不要加进本文件
+#    （列在这里是为了防止以后误加规则把它们排除掉）
+#
+#    网站本体：
+#      index.html  styles.css  i18n.js  site.js
+#      demos.js  lesson-content.js  extra-content.js
+#      lesson-01/index.html  …  lesson-07/index.html
+#
+#    Docker 部署：
+#      Dockerfile              docker-compose.yml
+#      .dockerignore           docker/nginx.conf.template
+#      deploy.sh               doctor.sh
+#
+#    文档与工具：
+#      README.md  DOCKER.md  DEPLOY.md  SERVER-SETUP.md
+#      tools/probe.mjs  tools/interact.mjs  tools/shot.mjs
+#      tools/check.mjs  tools/build_lessons.py
+# ------------------------------------------------------------
+
+
+# ============================================================
+# 首次清理：把历史上误提交的文件移出版本库
+#   只影响 Git 索引，不会删除本地文件
+# ============================================================
+#   git rm -r --cached tools/shots .DS_Store
+#   git add .gitignore
+#   git commit -m "chore: 移除验证截图与系统文件，仓库从 23MB 降到 550KB"
+#   git push
+#
+# 验证规则是否生效：
+#   git check-ignore -v tools/shots/index.png    # 应显示匹配到的规则
+#   git status --short                           # 不应再出现 .DS_Store
+#   git ls-files | wc -l                         # 应从 43 降到 21
+# ============================================================
